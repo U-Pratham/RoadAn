@@ -28,7 +28,7 @@ async def health_check():
         infer_service = InferenceService.get_instance()
         provider = infer_service.active_provider
         is_gpu = "Dml" in provider or "CUDA" in provider
-        hardware = "NVIDIA GeForce RTX 2050 (DirectML / DX12)" if is_gpu else "CPUExecutionProvider"
+        hardware = "NVIDIA GeForce RTX 2050 (DirectML / DX12)" if is_gpu else f"Linux CPU ({provider})"
     except Exception as e:
         provider = "Error"
         is_gpu = False

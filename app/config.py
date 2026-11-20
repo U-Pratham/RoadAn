@@ -23,7 +23,7 @@ DB_PATH = BASE_DIR / "roadsight.db"
 
 # Model Configuration
 DEFAULT_MODEL_PATH = WEIGHTS_DIR / "yolo11n.onnx"
-DEFAULT_CONFIDENCE_THRESHOLD = 0.25
+DEFAULT_CONFIDENCE_THRESHOLD = 0.20
 DEFAULT_IOU_THRESHOLD = 0.45
 TARGET_IMAGE_SIZE = 640
 
@@ -38,4 +38,4 @@ ALLOWED_CONTENT_TYPES = {
 }
 
 # Hardware Preference
-DEFAULT_DEVICE = "gpu"  # Will attempt DirectML then fall back to CPU
+DEFAULT_DEVICE = os.getenv("DEVICE", "cpu")  # Defaults to CPU on Linux/Render; set DEVICE=gpu for GPU

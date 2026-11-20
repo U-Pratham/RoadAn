@@ -267,7 +267,7 @@ def assess_image_risk(
             total_detections=0,
             hazard_breakdown={},
             individual_assessments=[],
-            summary_explanation="No road hazards detected. Road surface in acceptable condition."
+            summary_explanation="No road hazards detected above the confidence threshold. Note: Visual AI scan does not guarantee structural integrity or absence of obscured road defects."
         )
 
     # Evaluate each detection individually

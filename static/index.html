@@ -3,188 +3,612 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoadSight AI — Road Damage Detection & Risk Intelligence</title>
+  <title>RoadSight AI — Municipal Road Hazard & Risk Intelligence</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   
-  <!-- Custom CSS -->
+  <!-- Custom Application CSS -->
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <!-- Header -->
+
+  <!-- Top Navbar -->
   <header class="navbar">
     <div class="nav-brand">
       <div class="logo-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
       </div>
       <div>
         <h1 class="nav-title">ROADSIGHT <span>AI</span></h1>
-        <p class="nav-subtitle">Road Damage Detection & Risk Intelligence System</p>
+        <p class="nav-subtitle">Municipal Road Hazard & Risk Intelligence Platform</p>
       </div>
     </div>
+
+    <!-- Navigation Quick Links -->
+    <nav class="nav-links">
+      <a href="#section-stats" class="nav-link active" data-target="section-stats">Overview</a>
+      <a href="#section-detect" class="nav-link" data-target="section-detect">New Inspection</a>
+      <a href="#section-map" class="nav-link" data-target="section-map">GIS Map</a>
+      <a href="#section-history" class="nav-link" data-target="section-history">History Registry</a>
+    </nav>
+
+    <!-- Hardware Health Indicator -->
     <div class="nav-status">
-      <div class="status-pill" id="gpuStatus">
-        <span class="status-dot"></span>
-        <span id="gpuText">Detecting Hardware...</span>
+      <div class="status-pill" id="hardwareStatusPill" title="Inference Execution Provider">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="hardwareStatusText">Connecting to API...</span>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
+  <!-- Notification Banner -->
+  <div id="alertBanner" class="alert-banner hidden">
+    <span id="alertMessage"></span>
+    <button class="alert-close" id="alertCloseBtn">&times;</button>
+  </div>
+
   <main class="container">
-    
-    <!-- Controls Row -->
-    <section class="controls-card">
-      <div class="controls-grid">
-        <!-- Input Selector -->
-        <div class="control-group">
-          <label class="control-label">Source Selection</label>
-          <div class="btn-group">
-            <button class="btn btn-secondary active" id="btnUploadMode">Upload Image</button>
-            <button class="btn btn-secondary" id="btnSampleMode">Sample Roads</button>
-            <button class="btn btn-secondary" id="btnWebcamMode">Live Camera</button>
-          </div>
+
+    <!-- 1. OVERVIEW & KPI STATISTICS SECTION -->
+    <section id="section-stats" class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Municipal Infrastructure Overview</h2>
+          <p class="section-subtitle">Real-time aggregate road condition metrics from SQLite audit database</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btnRefreshStats">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh Stats
+        </button>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">TOTAL INSPECTIONS</div>
+          <div class="kpi-value" id="kpiTotalAnalyses">0</div>
+          <div class="kpi-subtext" id="kpiTotalAnalysesSub">0 analyzed runs</div>
         </div>
 
-        <!-- Sample Dropdown -->
-        <div class="control-group hidden" id="sampleGroup">
-          <label class="control-label" for="sampleSelect">Select Test Road</label>
-          <select id="sampleSelect" class="form-select">
-            <option value="">Loading samples...</option>
-          </select>
+        <div class="kpi-card">
+          <div class="kpi-label">TOTAL HAZARDS IDENTIFIED</div>
+          <div class="kpi-value text-cyan" id="kpiTotalHazards">0</div>
+          <div class="kpi-subtext" id="kpiTotalHazardsSub">Bounding box detections</div>
         </div>
 
-        <!-- Confidence Slider -->
-        <div class="control-group">
-          <div class="slider-header">
-            <label class="control-label" for="confSlider">Confidence Threshold</label>
-            <span class="slider-value" id="confValue">0.25</span>
-          </div>
-          <input type="range" id="confSlider" min="0.10" max="0.75" step="0.05" value="0.25" class="slider">
+        <div class="kpi-card kpi-critical">
+          <div class="kpi-label">CRITICAL PRIORITY</div>
+          <div class="kpi-value text-red" id="kpiCriticalCount">0</div>
+          <div class="kpi-subtext">Immediate action required</div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="control-group btn-action-group">
-          <button class="btn btn-primary" id="btnAnalyze">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Analyze Road
-          </button>
+        <div class="kpi-card kpi-high">
+          <div class="kpi-label">HIGH PRIORITY</div>
+          <div class="kpi-value text-orange" id="kpiHighCount">0</div>
+          <div class="kpi-subtext">48h scheduled repair</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">AVERAGE RISK INDEX</div>
+          <div class="kpi-value text-amber" id="kpiAvgRisk">0.0</div>
+          <div class="kpi-subtext">Scale: 0 – 100 max index</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-label">AVG INFERENCE LATENCY</div>
+          <div class="kpi-value text-green" id="kpiAvgLatency">0 ms</div>
+          <div class="kpi-subtext" id="kpiHardwareBadge">DirectML GPU</div>
         </div>
       </div>
 
-      <!-- File Dropzone -->
-      <div class="dropzone" id="dropzone">
-        <input type="file" id="fileInput" accept="image/*" class="file-input">
-        <div class="dropzone-content">
-          <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-          <p class="dropzone-text">Drag & drop road photograph here, or <span class="highlight">browse files</span></p>
-          <p class="dropzone-hint">Supports JPEG, PNG dashcam frames and smartphone captures with EXIF GPS</p>
+      <!-- Defect Classification Distribution -->
+      <div class="defect-summary-card">
+        <h3 class="card-subtitle-bold">Identified Damage Class Breakdown</h3>
+        <div class="defect-pill-grid">
+          <div class="defect-pill pothole">
+            <span class="pill-dot"></span>
+            <span class="pill-name">Potholes (D40)</span>
+            <strong class="pill-count" id="defectCountPothole">0</strong>
+          </div>
+          <div class="defect-pill alligator">
+            <span class="pill-dot"></span>
+            <span class="pill-name">Alligator Cracks (D20)</span>
+            <strong class="pill-count" id="defectCountAlligator">0</strong>
+          </div>
+          <div class="defect-pill longitudinal">
+            <span class="pill-dot"></span>
+            <span class="pill-name">Longitudinal Cracks (D00)</span>
+            <strong class="pill-count" id="defectCountLongitudinal">0</strong>
+          </div>
+          <div class="defect-pill transverse">
+            <span class="pill-dot"></span>
+            <span class="pill-name">Transverse Cracks (D10)</span>
+            <strong class="pill-count" id="defectCountTransverse">0</strong>
+          </div>
         </div>
-      </div>
-
-      <!-- Camera Feed (Hidden by default) -->
-      <div class="camera-panel hidden" id="cameraPanel">
-        <video id="webcam" autoplay playsinline class="camera-video"></video>
-        <button class="btn btn-primary" id="btnCapture">Capture & Scan</button>
       </div>
     </section>
 
-    <!-- Inspection Analysis View -->
-    <div class="dashboard-grid">
-      
-      <!-- Left: Image Viewer -->
-      <section class="card viewer-card">
-        <div class="card-header">
-          <h2 class="card-title">Computer Vision Inspection</h2>
-          <div class="badge-group" id="latencyBadges">
-            <span class="badge badge-info" id="badgeLatency">Ready</span>
-            <span class="badge badge-accent" id="badgeCount">0 Hazards</span>
-          </div>
-        </div>
-        <div class="viewer-container" id="viewerContainer">
-          <div class="viewer-placeholder" id="viewerPlaceholder">
-            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <p>Select a road photograph or sample to run AI inference</p>
-          </div>
-          <img id="annotatedImage" class="annotated-img hidden" alt="Annotated road damage">
-        </div>
-      </section>
-
-      <!-- Right: Risk Intelligence Panel -->
-      <section class="card risk-card">
-        <div class="card-header">
-          <h2 class="card-title">Risk Intelligence & Road Health</h2>
-        </div>
-        
-        <!-- Risk Gauge & Index -->
-        <div class="risk-overview">
-          <div class="risk-score-box">
-            <div class="risk-circle" id="riskCircle">
-              <span class="risk-score-num" id="riskScore">0</span>
-              <span class="risk-score-label">HAZARD INDEX</span>
-            </div>
-          </div>
-          <div class="risk-details">
-            <div class="risk-level-badge" id="riskLevelBadge">SAFE / CLEAR</div>
-            <p class="risk-action-text" id="riskAction">Upload road image to evaluate severity.</p>
-            <div class="pci-metric">
-              <span>Pavement Condition Index (PCI):</span>
-              <strong id="pciScore">100 / 100</strong>
-            </div>
-          </div>
-        </div>
-
-        <!-- Defect Breakdown Counters -->
-        <div class="defect-grid">
-          <div class="defect-tile defect-pothole">
-            <span class="defect-name">Potholes (D40)</span>
-            <strong class="defect-val" id="cntPothole">0</strong>
-          </div>
-          <div class="defect-tile defect-alligator">
-            <span class="defect-name">Alligator Cracks (D20)</span>
-            <strong class="defect-val" id="cntAlligator">0</strong>
-          </div>
-          <div class="defect-tile defect-longitudinal">
-            <span class="defect-name">Longitudinal (D00)</span>
-            <strong class="defect-val" id="cntLongitudinal">0</strong>
-          </div>
-          <div class="defect-tile defect-transverse">
-            <span class="defect-name">Transverse (D10)</span>
-            <strong class="defect-val" id="cntTransverse">0</strong>
-          </div>
-        </div>
-
-        <!-- Geo Location Info -->
-        <div class="geo-panel">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span id="geoText">GPS: No coordinates recorded yet</span>
-        </div>
-      </section>
-    </div>
-
-    <!-- Map Section -->
-    <section class="card map-card">
-      <div class="card-header">
+    <!-- 2. NEW ROAD INSPECTION & DETECTION WORKSPACE -->
+    <section id="section-detect" class="section-block">
+      <div class="section-header">
         <div>
-          <h2 class="card-title">Road Infrastructure GIS Map</h2>
-          <p class="card-subtitle">Geotagged road inspections with severity indicators and degradation history</p>
+          <h2 class="section-title">Road Damage Detection & Risk Engine</h2>
+          <p class="section-subtitle">Ingest road photographs, execute GPU YOLO11n inference, and evaluate explainable risk</p>
         </div>
-        <button class="btn btn-secondary btn-sm" id="btnRefreshHistory">Refresh Map</button>
       </div>
-      <div id="map" class="map-view"></div>
+
+      <div class="detection-workspace">
+        
+        <!-- Left: Upload & Input Controls -->
+        <div class="card upload-card">
+          <h3 class="card-title">1. Image Ingestion & Metadata</h3>
+          
+          <form id="detectForm">
+            <!-- Dropzone -->
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="fileInput" name="file" accept="image/jpeg,image/png,image/webp" class="file-input">
+              <div class="dropzone-content" id="dropzonePrompt">
+                <svg viewBox="0 0 24 24" width="44" height="44" stroke="currentColor" stroke-width="1.6" fill="none">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                </svg>
+                <p class="dropzone-title">Drag & drop road photograph here</p>
+                <p class="dropzone-desc">or <span class="highlight">browse from device</span></p>
+                <p class="dropzone-meta">Supports JPEG, PNG, WebP (Max 25 MB)</p>
+              </div>
+
+              <!-- Upload Client Preview -->
+              <div class="preview-box hidden" id="previewBox">
+                <img id="clientPreviewImg" src="" alt="Client preview">
+                <div class="preview-overlay">
+                  <span id="previewFilename">image.jpg</span>
+                  <button type="button" class="btn btn-sm btn-danger" id="btnRemoveFile">Remove</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Parameters Grid -->
+            <div class="form-grid">
+              
+              <!-- Road Category -->
+              <div class="form-group form-group-full">
+                <label class="form-label" for="roadCategory">Road Category Context</label>
+                <select id="roadCategory" class="form-select">
+                  <option value="main_urban">Main Urban Thoroughfare (18 pts)</option>
+                  <option value="highway">Highway / Major Arterial (25 pts)</option>
+                  <option value="residential">Residential Street (12 pts)</option>
+                  <option value="internal">Internal / Low-Traffic Road (6 pts)</option>
+                  <option value="unknown">Unknown / Unclassified (15 pts default)</option>
+                </select>
+              </div>
+
+              <!-- Latitude -->
+              <div class="form-group">
+                <label class="form-label" for="latInput">GPS Latitude (Optional)</label>
+                <input type="number" step="any" min="-90" max="90" id="latInput" class="form-input" placeholder="e.g. 12.971598">
+              </div>
+
+              <!-- Longitude -->
+              <div class="form-group">
+                <label class="form-label" for="lonInput">GPS Longitude (Optional)</label>
+                <input type="number" step="any" min="-180" max="180" id="lonInput" class="form-input" placeholder="e.g. 77.594562">
+              </div>
+
+            </div>
+
+            <!-- Advanced Detection Configuration (Collapsible) -->
+            <details class="advanced-settings-details" id="advancedSettings">
+              <summary class="advanced-settings-summary">
+                <span>Advanced AI Threshold Settings</span>
+                <span class="advanced-badge-current" id="advancedSummaryBadge">0.20 (Calibrated)</span>
+              </summary>
+              <div class="advanced-settings-body">
+                <div class="form-group">
+                  <div class="slider-header">
+                    <label class="form-label" for="confThreshold">Detection Confidence Threshold</label>
+                    <span class="slider-val-badge" id="confBadge">0.20</span>
+                  </div>
+                  <input type="range" id="confThreshold" min="0.10" max="0.75" step="0.05" value="0.20" class="slider">
+                  <p class="advanced-help-text">Calibrated default (0.20) detects compressed, low-contrast road hazards while preventing false positives. Raising above 0.35 causes severe false negatives on multi-pothole imagery.</p>
+                </div>
+              </div>
+            </details>
+
+            <!-- Coordinate Helper Preset Chips -->
+            <div class="preset-row">
+              <span class="preset-label">Sample Coordinates:</span>
+              <button type="button" class="chip-btn" data-lat="12.9716" data-lon="77.5946" data-road="main_urban">Bengaluru Urban</button>
+              <button type="button" class="chip-btn" data-lat="28.6139" data-lon="77.2090" data-road="highway">Delhi Ring Road</button>
+              <button type="button" class="chip-btn" data-lat="19.0760" data-lon="72.8777" data-road="main_urban">Mumbai Arterial</button>
+              <button type="button" class="chip-btn-clear" id="btnClearGPS">Clear GPS</button>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary btn-block" id="btnSubmitDetect">
+              <span id="btnSubmitSpinner" class="spinner hidden"></span>
+              <span id="btnSubmitText">Execute AI Road Analysis</span>
+            </button>
+
+          </form>
+        </div>
+
+        <!-- Right: AI Inspection Viewer & Explainability -->
+        <div class="card result-card">
+          <div class="result-header">
+            <div>
+              <h3 class="card-title">2. AI Damage Inspection & Risk Intelligence</h3>
+              <p class="card-subtitle" id="resultSubtitle">Awaiting image ingestion...</p>
+            </div>
+            
+            <!-- View Mode Switcher -->
+            <div class="toggle-group hidden" id="viewToggleGroup">
+              <button type="button" class="toggle-btn active" id="btnShowAnnotated">Annotated</button>
+              <button type="button" class="toggle-btn" id="btnShowOriginal">Original</button>
+            </div>
+          </div>
+
+          <!-- Empty State Viewer -->
+          <div class="viewer-wrapper" id="viewerWrapper">
+            <div class="viewer-placeholder" id="viewerPlaceholder">
+              <svg viewBox="0 0 24 24" width="56" height="56" stroke="currentColor" stroke-width="1.2" fill="none">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <p class="placeholder-title">No inspection loaded</p>
+              <p class="placeholder-desc">Select an image on the left and click "Execute AI Road Analysis" to generate real ONNX bounding boxes and risk assessments.</p>
+            </div>
+
+            <!-- Image Elements -->
+            <img id="imgAnnotated" class="viewer-image hidden" alt="Annotated road damage">
+            <img id="imgOriginal" class="viewer-image hidden" alt="Original road photograph">
+
+            <!-- Loading Overlay -->
+            <div class="viewer-loading hidden" id="viewerLoading">
+              <div class="pulse-spinner"></div>
+              <p class="loading-title">Running Neural Network Inference...</p>
+              <p class="loading-sub" id="loadingStageText">Letterboxing, DirectML GPU pass, NMS & Risk Evaluation</p>
+            </div>
+          </div>
+
+          <!-- Risk Assessment Summary Box -->
+          <div class="risk-assessment-container hidden" id="riskAssessmentContainer">
+            
+            <!-- Top Score Row -->
+            <div class="risk-score-banner">
+              <div class="risk-score-display">
+                <div class="risk-score-circle" id="riskScoreCircle">
+                  <span class="score-number" id="riskScoreValue">0</span>
+                  <span class="score-label">RISK / 100</span>
+                </div>
+              </div>
+
+              <div class="risk-meta-info">
+                <div class="priority-badge-row">
+                  <span class="priority-badge priority-low" id="priorityBadge">LOW PRIORITY</span>
+                  <span class="badge-tag" id="hazardCountTag">0 Hazards Detected</span>
+                  <span class="badge-tag latency-tag" id="latencyTag">12.3 ms</span>
+                </div>
+                <p class="risk-explanation-text" id="riskExplanationText">
+                  No road hazards detected above confidence threshold (0.20).
+                </p>
+                <div class="meta-row">
+                  <span id="metaDimensions">Dimensions: 720x960</span>
+                  <span id="metaRoadCategory">Road: Main Urban</span>
+                  <span id="metaGPS">GPS: No coordinates</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Factor Breakdown Grid -->
+            <div class="factors-section">
+              <h4 class="factors-title">Multi-Factor Risk Contribution Breakdown</h4>
+              <div class="factor-cards-grid">
+                
+                <div class="factor-card">
+                  <div class="factor-header">
+                    <span>Factor A: Damage Severity</span>
+                    <strong id="factorSeverityScore">0.0 / 40</strong>
+                  </div>
+                  <div class="progress-bar-bg">
+                    <div class="progress-bar-fill fill-red" id="barSeverity" style="width: 0%;"></div>
+                  </div>
+                  <div class="factor-desc">Pothole (40), Alligator (30), Transverse (22), Longitudinal (18)</div>
+                </div>
+
+                <div class="factor-card">
+                  <div class="factor-header">
+                    <span>Factor B: Damaged Area Ratio</span>
+                    <strong id="factorAreaScore">0.0 / 20</strong>
+                  </div>
+                  <div class="progress-bar-bg">
+                    <div class="progress-bar-fill fill-orange" id="barArea" style="width: 0%;"></div>
+                  </div>
+                  <div class="factor-desc">Visual area ratio scaled against 5% frame saturation threshold</div>
+                </div>
+
+                <div class="factor-card">
+                  <div class="factor-header">
+                    <span>Factor C: Model Confidence</span>
+                    <strong id="factorConfScore">0.0 / 15</strong>
+                  </div>
+                  <div class="progress-bar-bg">
+                    <div class="progress-bar-fill fill-blue" id="barConfidence" style="width: 0%;"></div>
+                  </div>
+                  <div class="factor-desc">Direct linear scaling of detector confidence probability</div>
+                </div>
+
+                <div class="factor-card">
+                  <div class="factor-header">
+                    <span>Factor D: Road Importance</span>
+                    <strong id="factorRoadScore">0.0 / 25</strong>
+                  </div>
+                  <div class="progress-bar-bg">
+                    <div class="progress-bar-fill fill-purple" id="barRoad" style="width: 0%;"></div>
+                  </div>
+                  <div class="factor-desc">Traffic volume & functional road classification weight</div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Detected Hazards Table -->
+            <div class="hazards-table-section">
+              <h4 class="factors-title">Individual Detected Road Hazards</h4>
+              <div class="table-responsive">
+                <table class="data-table" id="detectionItemsTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Class</th>
+                      <th>Confidence</th>
+                      <th>Bounding Box [x1, y1, x2, y2]</th>
+                      <th>Individual Score</th>
+                      <th>Priority</th>
+                    </tr>
+                  </thead>
+                  <tbody id="detectionTableBody">
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Engineering Disclaimer -->
+            <div class="engineering-disclaimer">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <span><strong>Operational Advisory:</strong> Risk scores are estimated multi-factor maintenance prioritization rankings computed from visual hazard dimensions. They do not constitute scientifically certified civil crash probability.</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. GIS INFRASTRUCTURE MAP SECTION -->
+    <section id="section-map" class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Geographic Information System (GIS) Hazard Map</h2>
+          <p class="section-subtitle">Real geotagged inspections plotted on OpenStreetMap with color-coded severity markers</p>
+        </div>
+        <div class="map-controls-header">
+          <span class="map-stat-badge" id="mapGeolocatedCount">0 Geotagged Records</span>
+          <button class="btn btn-secondary btn-sm" id="btnFitMapBounds">Recenter Map</button>
+        </div>
+      </div>
+
+      <div class="map-layout-grid">
+        <!-- Leaflet Map Container -->
+        <div class="map-wrapper card">
+          <div id="map" class="map-container"></div>
+          
+          <!-- Map Legend -->
+          <div class="map-legend">
+            <span class="legend-title">Priority Tiers:</span>
+            <div class="legend-item"><span class="legend-dot dot-critical"></span> Critical (80-100)</div>
+            <div class="legend-item"><span class="legend-dot dot-high"></span> High (60-79)</div>
+            <div class="legend-item"><span class="legend-dot dot-moderate"></span> Moderate (40-59)</div>
+            <div class="legend-item"><span class="legend-dot dot-low"></span> Low (0-39)</div>
+          </div>
+
+          <!-- Empty Map Overlay -->
+          <div class="map-empty-overlay hidden" id="mapEmptyOverlay">
+            <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="1.5" fill="none">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <p>No geolocated road inspections in database.</p>
+            <p class="sub">Upload road photographs with GPS coordinates to populate the map.</p>
+          </div>
+        </div>
+
+        <!-- Sidebar: Unlocated Inspections List (Fulfills Stage 5 Requirement) -->
+        <div class="card unlocated-card">
+          <div class="card-header-compact">
+            <h3 class="card-title-sm">Unlocated Inspections</h3>
+            <span class="badge-tag" id="unlocatedCountBadge">0 records without GPS</span>
+          </div>
+          <p class="card-desc-sm">Inspections uploaded without latitude/longitude metadata. Click any entry to inspect details.</p>
+          
+          <div class="unlocated-list" id="unlocatedList">
+            <div class="empty-list-placeholder">No unlocated records</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. HISTORICAL INSPECTION REGISTRY SECTION -->
+    <section id="section-history" class="section-block">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Inspection Registry & Audit Log</h2>
+          <p class="section-subtitle">Search, filter, and review historical road inspections persisted in SQLite</p>
+        </div>
+        <div class="table-filter-bar">
+          <!-- Search Input -->
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="historySearchInput" class="search-input" placeholder="Search by filename, road, ID...">
+          </div>
+
+          <!-- Priority Filter -->
+          <select id="historyPriorityFilter" class="form-select select-sm">
+            <option value="">All Priorities</option>
+            <option value="Critical">Critical Only</option>
+            <option value="High">High Only</option>
+            <option value="Moderate">Moderate Only</option>
+            <option value="Low">Low Only</option>
+          </select>
+
+          <!-- Sort Selector -->
+          <select id="historySortSelector" class="form-select select-sm">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="risk_high">Highest Risk</option>
+            <option value="risk_low">Lowest Risk</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- History Table Card -->
+      <div class="card table-card">
+        <div class="table-responsive">
+          <table class="data-table" id="historyTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Thumbnail</th>
+                <th>Filename</th>
+                <th>Timestamp</th>
+                <th>Road Category</th>
+                <th>GPS Location</th>
+                <th>Hazards</th>
+                <th>Risk Score</th>
+                <th>Priority</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty History State -->
+        <div class="table-empty hidden" id="historyEmptyState">
+          <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.2" fill="none">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <p class="empty-title">No inspection records found</p>
+          <p class="empty-sub">Upload an image in the Detection Workspace above to create an inspection audit trail.</p>
+        </div>
+      </div>
     </section>
 
   </main>
 
+  <!-- 5. INSPECTION DETAIL MODAL -->
+  <div class="modal-backdrop hidden" id="inspectionModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="modalTitle">Inspection Audit #1</h3>
+          <p class="modal-subtitle" id="modalSubtitle">Uploaded on 2026-11-21 00:00:00</p>
+        </div>
+        <button class="modal-close" id="btnModalClose">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Modal Image Switcher -->
+        <div class="modal-viewer-box">
+          <div class="modal-viewer-header">
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" id="btnModalAnnotated">Annotated View</button>
+              <button type="button" class="toggle-btn" id="btnModalOriginal">Original Photograph</button>
+            </div>
+            <div class="modal-badges" id="modalBadges">
+              <!-- Badges -->
+            </div>
+          </div>
+          <div class="modal-image-wrapper">
+            <img id="modalImgAnnotated" class="modal-img" alt="Annotated view">
+            <img id="modalImgOriginal" class="modal-img hidden" alt="Original view">
+          </div>
+        </div>
+
+        <!-- Modal Risk and Summary Details -->
+        <div class="modal-details-grid">
+          <div class="modal-detail-card">
+            <h4>Diagnosis Summary</h4>
+            <p id="modalExplanation" class="text-sm">Summary details...</p>
+          </div>
+          <div class="modal-detail-card">
+            <h4>Inspection Metadata</h4>
+            <ul class="meta-list" id="modalMetaList">
+              <li><strong>Road Category:</strong> <span id="modalRoadCat">-</span></li>
+              <li><strong>Coordinates:</strong> <span id="modalCoords">-</span></li>
+              <li><strong>Inference Latency:</strong> <span id="modalLatency">-</span></li>
+              <li><strong>Total Processing:</strong> <span id="modalTotalTime">-</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Modal Hazard Detections Table -->
+        <div class="modal-hazards-section">
+          <h4>Detected Hazards & Sub-Scores</h4>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Class</th>
+                  <th>Confidence</th>
+                  <th>Bounding Box</th>
+                  <th>Individual Score</th>
+                  <th>Priority</th>
+                  <th>Explanation</th>
+                </tr>
+              </thead>
+              <tbody id="modalDetectionsBody">
+                <!-- Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnModalCloseFooter">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>RoadSight AI — Explainable Road Damage Intelligence System • Powered by YOLO11n ONNX + DirectML GPU + FastAPI</p>
+      <p class="footer-sub">Autonomous Infrastructure Monitoring for Municipal Civil Authorities</p>
+    </div>
+  </footer>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <!-- Application JS -->
+  
+  <!-- Main Frontend Application Logic -->
   <script src="/static/app.js"></script>
+
 </body>
 </html>

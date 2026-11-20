@@ -11,6 +11,10 @@ __pycache__/
 dist/
 build/
 .cache/
+data/uploads/
+outputs/
+*.db
+
 
 # IDE & OS
 .vscode/

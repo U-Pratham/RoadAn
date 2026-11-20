@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: roadsight-ai
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.10
+      - key: DEVICE
+        value: cpu
+      - key: HOST
+        value: 0.0.0.0

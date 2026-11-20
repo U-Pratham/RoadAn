@@ -16,7 +16,7 @@ ACTION_RECOMMENDATIONS = {
     "CRITICAL": "Emergency repair needed: Severe road cratering poses imminent risk of tire blowout or vehicular accidents.",
     "HIGH": "Priority resurfacing recommended: Significant structural degradation and water ingress risk.",
     "MODERATE": "Preventative maintenance scheduled: Pavement cracks should be crack-sealed to avoid sub-base erosion.",
-    "LOW": "Road surface in acceptable condition: Routine monitoring recommended."
+    "LOW": "No high-severity hazards detected above threshold: Routine monitoring recommended."
 }
 
 def calculate_risk(detections: List[Dict[str, Any]], img_w: int = 640, img_h: int = 640) -> Dict[str, Any]:

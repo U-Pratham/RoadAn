@@ -67,7 +67,7 @@ def compute_iou(box1, box2):
 
     return intersection / union if union > 0 else 0.0
 
-def decode_and_nms(output: np.ndarray, scale: float, px: int, py: int, orig_w: int, orig_h: int, conf_thresh: float = 0.25, iou_thresh: float = 0.45):
+def decode_and_nms(output: np.ndarray, scale: float, px: int, py: int, orig_w: int, orig_h: int, conf_thresh: float = 0.20, iou_thresh: float = 0.45):
     """
     Decode raw YOLO output [1, 8, 8400] and apply multi-class NMS.
     """
@@ -172,7 +172,7 @@ def get_ort_session(model_path: str, device: str = "cpu"):
 
     return ort.InferenceSession(model_path, providers=providers)
 
-def run_inference(image_path: str, model_path: str = "weights/yolo11n.onnx", output_dir: str = "outputs", device: str = "cpu", conf_thresh: float = 0.25):
+def run_inference(image_path: str, model_path: str = "weights/yolo11n.onnx", output_dir: str = "outputs", device: str = "cpu", conf_thresh: float = 0.20):
     image_file = Path(image_path)
     if not image_file.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
