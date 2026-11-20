@@ -1,0 +1,2084 @@
+{
+  "provider_gpu": "DmlExecutionProvider",
+  "provider_cpu": "CPUExecutionProvider",
+  "total_images": 36,
+  "threshold_summary": {
+    "0.15": {
+      "total_dets": 55,
+      "by_class": {
+        "pothole": 35,
+        "alligator_crack": 10,
+        "longitudinal_crack": 10
+      }
+    },
+    "0.25": {
+      "total_dets": 34,
+      "by_class": {
+        "pothole": 21,
+        "alligator_crack": 8,
+        "longitudinal_crack": 5
+      }
+    },
+    "0.4": {
+      "total_dets": 15,
+      "by_class": {
+        "pothole": 8,
+        "alligator_crack": 5,
+        "longitudinal_crack": 2
+      }
+    }
+  },
+  "images": {
+    "01.jpg": {
+      "filename": "01.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 16.83,
+      "cpu_latency_ms": 66.3,
+      "thresholds": {
+        "0.15": {
+          "count": 2,
+          "detections": [
+            {
+              "box": [
+                460.7314758300781,
+                614.6017456054688,
+                543.3245849609375,
+                663.004638671875
+              ],
+              "score": 0.50945645570755,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                431.46551513671875,
+                679.2572631835938,
+                499.9535827636719,
+                704.0070190429688
+              ],
+              "score": 0.3882414698600769,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_01.jpg"
+        },
+        "0.25": {
+          "count": 2,
+          "detections": [
+            {
+              "box": [
+                460.7314758300781,
+                614.6017456054688,
+                543.3245849609375,
+                663.004638671875
+              ],
+              "score": 0.50945645570755,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                431.46551513671875,
+                679.2572631835938,
+                499.9535827636719,
+                704.0070190429688
+              ],
+              "score": 0.3882414698600769,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_01.jpg"
+        },
+        "0.4": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                460.7314758300781,
+                614.6017456054688,
+                543.3245849609375,
+                663.004638671875
+              ],
+              "score": 0.50945645570755,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_01.jpg"
+        }
+      }
+    },
+    "02.jpg": {
+      "filename": "02.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 11.35,
+      "cpu_latency_ms": 55.19,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                231.589111328125,
+                614.8305053710938,
+                327.51336669921875,
+                657.593505859375
+              ],
+              "score": 0.2992497682571411,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_02.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                231.589111328125,
+                614.8305053710938,
+                327.51336669921875,
+                657.593505859375
+              ],
+              "score": 0.2992497682571411,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_02.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_02.jpg"
+        }
+      }
+    },
+    "03.jpg": {
+      "filename": "03.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 11.19,
+      "cpu_latency_ms": 53.13,
+      "thresholds": {
+        "0.15": {
+          "count": 2,
+          "detections": [
+            {
+              "box": [
+                377.4433898925781,
+                597.0304565429688,
+                606.7289428710938,
+                706.1856689453125
+              ],
+              "score": 0.45897144079208374,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                379.0626525878906,
+                608.9923706054688,
+                533.5455322265625,
+                672.2694702148438
+              ],
+              "score": 0.23591040074825287,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_03.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                377.4433898925781,
+                597.0304565429688,
+                606.7289428710938,
+                706.1856689453125
+              ],
+              "score": 0.45897144079208374,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_03.jpg"
+        },
+        "0.4": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                377.4433898925781,
+                597.0304565429688,
+                606.7289428710938,
+                706.1856689453125
+              ],
+              "score": 0.45897144079208374,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_03.jpg"
+        }
+      }
+    },
+    "04.jpg": {
+      "filename": "04.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 11.19,
+      "cpu_latency_ms": 52.58,
+      "thresholds": {
+        "0.15": {
+          "count": 5,
+          "detections": [
+            {
+              "box": [
+                502.3447570800781,
+                572.2601318359375,
+                603.37890625,
+                613.9521484375
+              ],
+              "score": 0.4688721001148224,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                303.15887451171875,
+                469.8459167480469,
+                472.2865295410156,
+                513.2429809570312
+              ],
+              "score": 0.3100350797176361,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                506.68341064453125,
+                567.1022338867188,
+                720.0,
+                676.1326293945312
+              ],
+              "score": 0.3066646158695221,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                320.3430480957031,
+                507.3191833496094,
+                377.73919677734375,
+                534.6881713867188
+              ],
+              "score": 0.27705973386764526,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                102.58959197998047,
+                581.3508911132812,
+                507.122802734375,
+                677.1708984375
+              ],
+              "score": 0.2484019696712494,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_04.jpg"
+        },
+        "0.25": {
+          "count": 4,
+          "detections": [
+            {
+              "box": [
+                502.3447570800781,
+                572.2601318359375,
+                603.37890625,
+                613.9521484375
+              ],
+              "score": 0.4688721001148224,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                303.15887451171875,
+                469.8459167480469,
+                472.2865295410156,
+                513.2429809570312
+              ],
+              "score": 0.3100350797176361,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                506.68341064453125,
+                567.1022338867188,
+                720.0,
+                676.1326293945312
+              ],
+              "score": 0.3066646158695221,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                320.3430480957031,
+                507.3191833496094,
+                377.73919677734375,
+                534.6881713867188
+              ],
+              "score": 0.27705973386764526,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_04.jpg"
+        },
+        "0.4": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                502.3447570800781,
+                572.2601318359375,
+                603.37890625,
+                613.9521484375
+              ],
+              "score": 0.4688721001148224,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_04.jpg"
+        }
+      }
+    },
+    "05.jpg": {
+      "filename": "05.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 11.19,
+      "cpu_latency_ms": 54.82,
+      "thresholds": {
+        "0.15": {
+          "count": 3,
+          "detections": [
+            {
+              "box": [
+                8.67205810546875,
+                446.0815124511719,
+                445.6194763183594,
+                571.4097290039062
+              ],
+              "score": 0.2786756753921509,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                163.8584442138672,
+                433.7293701171875,
+                434.89190673828125,
+                520.4884033203125
+              ],
+              "score": 0.23772139847278595,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                187.89093017578125,
+                439.10162353515625,
+                278.4903259277344,
+                467.73681640625
+              ],
+              "score": 0.20405983924865723,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_05.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                8.67205810546875,
+                446.0815124511719,
+                445.6194763183594,
+                571.4097290039062
+              ],
+              "score": 0.2786756753921509,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_05.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_05.jpg"
+        }
+      }
+    },
+    "06.jpg": {
+      "filename": "06.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 11.43,
+      "cpu_latency_ms": 58.17,
+      "thresholds": {
+        "0.15": {
+          "count": 2,
+          "detections": [
+            {
+              "box": [
+                427.7651062011719,
+                554.2972412109375,
+                542.8538818359375,
+                662.4320068359375
+              ],
+              "score": 0.30985182523727417,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                427.1099853515625,
+                553.3458862304688,
+                541.1573486328125,
+                660.599365234375
+              ],
+              "score": 0.18523424863815308,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_06.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                427.7651062011719,
+                554.2972412109375,
+                542.8538818359375,
+                662.4320068359375
+              ],
+              "score": 0.30985182523727417,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_06.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_06.jpg"
+        }
+      }
+    },
+    "07.jpg": {
+      "filename": "07.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 11.76,
+      "cpu_latency_ms": 61.1,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_07.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_07.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_07.jpg"
+        }
+      }
+    },
+    "08.jpg": {
+      "filename": "08.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 11.65,
+      "cpu_latency_ms": 55.68,
+      "thresholds": {
+        "0.15": {
+          "count": 3,
+          "detections": [
+            {
+              "box": [
+                226.27053833007812,
+                442.9547424316406,
+                438.6990966796875,
+                653.2368774414062
+              ],
+              "score": 0.6805704236030579,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                218.1851043701172,
+                481.173828125,
+                306.7011413574219,
+                659.3231201171875
+              ],
+              "score": 0.3161071836948395,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                480.01568603515625,
+                518.6421508789062,
+                718.1918334960938,
+                662.2581787109375
+              ],
+              "score": 0.25691691040992737,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_08.jpg"
+        },
+        "0.25": {
+          "count": 3,
+          "detections": [
+            {
+              "box": [
+                226.27053833007812,
+                442.9547424316406,
+                438.6990966796875,
+                653.2368774414062
+              ],
+              "score": 0.6805704236030579,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                218.1851043701172,
+                481.173828125,
+                306.7011413574219,
+                659.3231201171875
+              ],
+              "score": 0.3161071836948395,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                480.01568603515625,
+                518.6421508789062,
+                718.1918334960938,
+                662.2581787109375
+              ],
+              "score": 0.25691691040992737,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_08.jpg"
+        },
+        "0.4": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                226.27053833007812,
+                442.9547424316406,
+                438.6990966796875,
+                653.2368774414062
+              ],
+              "score": 0.6805704236030579,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_08.jpg"
+        }
+      }
+    },
+    "09.jpg": {
+      "filename": "09.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 12.89,
+      "cpu_latency_ms": 56.04,
+      "thresholds": {
+        "0.15": {
+          "count": 5,
+          "detections": [
+            {
+              "box": [
+                0.0,
+                556.0160522460938,
+                578.8985595703125,
+                717.38818359375
+              ],
+              "score": 0.3441275954246521,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                355.2834167480469,
+                586.8462524414062,
+                391.1759033203125,
+                695.4996337890625
+              ],
+              "score": 0.3174441456794739,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                247.2804718017578,
+                556.8138427734375,
+                316.9510803222656,
+                600.6793212890625
+              ],
+              "score": 0.1893318146467209,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                400.66375732421875,
+                588.8820190429688,
+                581.9506225585938,
+                698.2747802734375
+              ],
+              "score": 0.17754493653774261,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                2.108928680419922,
+                535.1315307617188,
+                257.24163818359375,
+                714.6984252929688
+              ],
+              "score": 0.15234564244747162,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_09.jpg"
+        },
+        "0.25": {
+          "count": 2,
+          "detections": [
+            {
+              "box": [
+                0.0,
+                556.0160522460938,
+                578.8985595703125,
+                717.38818359375
+              ],
+              "score": 0.3441275954246521,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                355.2834167480469,
+                586.8462524414062,
+                391.1759033203125,
+                695.4996337890625
+              ],
+              "score": 0.3174441456794739,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_09.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_09.jpg"
+        }
+      }
+    },
+    "10.jpg": {
+      "filename": "10.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 15.23,
+      "cpu_latency_ms": 57.2,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                384.104248046875,
+                503.8356018066406,
+                462.38519287109375,
+                533.188720703125
+              ],
+              "score": 0.3355851173400879,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_10.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                384.104248046875,
+                503.8356018066406,
+                462.38519287109375,
+                533.188720703125
+              ],
+              "score": 0.3355851173400879,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_10.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_10.jpg"
+        }
+      }
+    },
+    "11.jpg": {
+      "filename": "11.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 15.39,
+      "cpu_latency_ms": 63.9,
+      "thresholds": {
+        "0.15": {
+          "count": 14,
+          "detections": [
+            {
+              "box": [
+                291.9908447265625,
+                531.1060791015625,
+                353.102294921875,
+                574.2212524414062
+              ],
+              "score": 0.6531882882118225,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                176.97000122070312,
+                623.1233520507812,
+                236.7870635986328,
+                654.726806640625
+              ],
+              "score": 0.5440955758094788,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                200.3422088623047,
+                527.2201538085938,
+                276.60107421875,
+                569.293212890625
+              ],
+              "score": 0.49348509311676025,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                386.99078369140625,
+                493.6141052246094,
+                424.7216796875,
+                518.0189819335938
+              ],
+              "score": 0.4214085638523102,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                3.8643722534179688,
+                491.8549499511719,
+                571.3285522460938,
+                655.3843994140625
+              ],
+              "score": 0.4161913990974426,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                387.18121337890625,
+                481.2046813964844,
+                459.9862365722656,
+                518.6004638671875
+              ],
+              "score": 0.3920481204986572,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                344.81195068359375,
+                450.9700622558594,
+                375.880859375,
+                470.1156005859375
+              ],
+              "score": 0.3345317840576172,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                359.3783874511719,
+                525.9058837890625,
+                389.1207580566406,
+                545.5811767578125
+              ],
+              "score": 0.3302099406719208,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                0.32731103897094727,
+                589.1025390625,
+                63.962276458740234,
+                660.73779296875
+              ],
+              "score": 0.23163680732250214,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                83.56549835205078,
+                565.577392578125,
+                128.15000915527344,
+                593.7032470703125
+              ],
+              "score": 0.21637076139450073,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                340.0063781738281,
+                433.42413330078125,
+                419.95953369140625,
+                475.47161865234375
+              ],
+              "score": 0.19728581607341766,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                327.6480712890625,
+                578.1674194335938,
+                383.5137023925781,
+                623.2794799804688
+              ],
+              "score": 0.18220245838165283,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                390.97003173828125,
+                520.3353271484375,
+                437.53765869140625,
+                560.2937622070312
+              ],
+              "score": 0.17452901601791382,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                357.7999572753906,
+                522.5107421875,
+                422.38287353515625,
+                554.0090942382812
+              ],
+              "score": 0.15502582490444183,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_11.jpg"
+        },
+        "0.25": {
+          "count": 8,
+          "detections": [
+            {
+              "box": [
+                291.9908447265625,
+                531.1060791015625,
+                353.102294921875,
+                574.2212524414062
+              ],
+              "score": 0.6531882882118225,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                176.97000122070312,
+                623.1233520507812,
+                236.7870635986328,
+                654.726806640625
+              ],
+              "score": 0.5440955758094788,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                200.3422088623047,
+                527.2201538085938,
+                276.60107421875,
+                569.293212890625
+              ],
+              "score": 0.49348509311676025,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                386.99078369140625,
+                493.6141052246094,
+                424.7216796875,
+                518.0189819335938
+              ],
+              "score": 0.4214085638523102,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                3.8643722534179688,
+                491.8549499511719,
+                571.3285522460938,
+                655.3843994140625
+              ],
+              "score": 0.4161913990974426,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                387.18121337890625,
+                481.2046813964844,
+                459.9862365722656,
+                518.6004638671875
+              ],
+              "score": 0.3920481204986572,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                344.81195068359375,
+                450.9700622558594,
+                375.880859375,
+                470.1156005859375
+              ],
+              "score": 0.3345317840576172,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                359.3783874511719,
+                525.9058837890625,
+                389.1207580566406,
+                545.5811767578125
+              ],
+              "score": 0.3302099406719208,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_11.jpg"
+        },
+        "0.4": {
+          "count": 5,
+          "detections": [
+            {
+              "box": [
+                291.9908447265625,
+                531.1060791015625,
+                353.102294921875,
+                574.2212524414062
+              ],
+              "score": 0.6531882882118225,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                176.97000122070312,
+                623.1233520507812,
+                236.7870635986328,
+                654.726806640625
+              ],
+              "score": 0.5440955758094788,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                200.3422088623047,
+                527.2201538085938,
+                276.60107421875,
+                569.293212890625
+              ],
+              "score": 0.49348509311676025,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                386.99078369140625,
+                493.6141052246094,
+                424.7216796875,
+                518.0189819335938
+              ],
+              "score": 0.4214085638523102,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                3.8643722534179688,
+                491.8549499511719,
+                571.3285522460938,
+                655.3843994140625
+              ],
+              "score": 0.4161913990974426,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_11.jpg"
+        }
+      }
+    },
+    "12.jpg": {
+      "filename": "12.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 15.26,
+      "cpu_latency_ms": 52.46,
+      "thresholds": {
+        "0.15": {
+          "count": 5,
+          "detections": [
+            {
+              "box": [
+                0.0,
+                464.0442199707031,
+                668.2685546875,
+                696.3280029296875
+              ],
+              "score": 0.6685067415237427,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                375.4049987792969,
+                443.9577331542969,
+                407.6828918457031,
+                465.8673400878906
+              ],
+              "score": 0.474761039018631,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                43.46733856201172,
+                522.8424682617188,
+                138.4376220703125,
+                573.5664672851562
+              ],
+              "score": 0.347891628742218,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                142.84979248046875,
+                462.1566467285156,
+                195.29859924316406,
+                487.7064514160156
+              ],
+              "score": 0.2797524929046631,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                317.7380676269531,
+                407.380859375,
+                385.74658203125,
+                432.92022705078125
+              ],
+              "score": 0.1706746369600296,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_12.jpg"
+        },
+        "0.25": {
+          "count": 4,
+          "detections": [
+            {
+              "box": [
+                0.0,
+                464.0442199707031,
+                668.2685546875,
+                696.3280029296875
+              ],
+              "score": 0.6685067415237427,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                375.4049987792969,
+                443.9577331542969,
+                407.6828918457031,
+                465.8673400878906
+              ],
+              "score": 0.474761039018631,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                43.46733856201172,
+                522.8424682617188,
+                138.4376220703125,
+                573.5664672851562
+              ],
+              "score": 0.347891628742218,
+              "class_id": 3,
+              "class_name": "pothole"
+            },
+            {
+              "box": [
+                142.84979248046875,
+                462.1566467285156,
+                195.29859924316406,
+                487.7064514160156
+              ],
+              "score": 0.2797524929046631,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_12.jpg"
+        },
+        "0.4": {
+          "count": 2,
+          "detections": [
+            {
+              "box": [
+                0.0,
+                464.0442199707031,
+                668.2685546875,
+                696.3280029296875
+              ],
+              "score": 0.6685067415237427,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            },
+            {
+              "box": [
+                375.4049987792969,
+                443.9577331542969,
+                407.6828918457031,
+                465.8673400878906
+              ],
+              "score": 0.474761039018631,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_12.jpg"
+        }
+      }
+    },
+    "asphalt-damage-road-cracking.jpg": {
+      "filename": "asphalt-damage-road-cracking.jpg",
+      "dimensions": "2048x1365",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 15.47,
+      "cpu_latency_ms": 58.5,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_asphalt-damage-road-cracking.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_asphalt-damage-road-cracking.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_asphalt-damage-road-cracking.jpg"
+        }
+      }
+    },
+    "China_Drone_001579.jpg": {
+      "filename": "China_Drone_001579.jpg",
+      "dimensions": "512x512",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 16.28,
+      "cpu_latency_ms": 58.81,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_China_Drone_001579.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_China_Drone_001579.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_China_Drone_001579.jpg"
+        }
+      }
+    },
+    "China_MotorBike_000345.jpg": {
+      "filename": "China_MotorBike_000345.jpg",
+      "dimensions": "512x512",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 16.19,
+      "cpu_latency_ms": 50.14,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_China_MotorBike_000345.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_China_MotorBike_000345.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_China_MotorBike_000345.jpg"
+        }
+      }
+    },
+    "China_MotorBike_001031.jpg": {
+      "filename": "China_MotorBike_001031.jpg",
+      "dimensions": "512x512",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 16.49,
+      "cpu_latency_ms": 50.41,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_China_MotorBike_001031.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_China_MotorBike_001031.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_China_MotorBike_001031.jpg"
+        }
+      }
+    },
+    "China_MotorBike_001199.jpg": {
+      "filename": "China_MotorBike_001199.jpg",
+      "dimensions": "512x512",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 16.61,
+      "cpu_latency_ms": 50.27,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                414.03515625,
+                188.6410675048828,
+                511.3505859375,
+                346.343505859375
+              ],
+              "score": 0.2436690777540207,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_China_MotorBike_001199.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_China_MotorBike_001199.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_China_MotorBike_001199.jpg"
+        }
+      }
+    },
+    "China_MotorBike_001707.jpg": {
+      "filename": "China_MotorBike_001707.jpg",
+      "dimensions": "512x512",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.24,
+      "cpu_latency_ms": 54.04,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_China_MotorBike_001707.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_China_MotorBike_001707.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_China_MotorBike_001707.jpg"
+        }
+      }
+    },
+    "India_004912.jpg": {
+      "filename": "India_004912.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.04,
+      "cpu_latency_ms": 86.47,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                286.18609619140625,
+                435.60302734375,
+                455.44757080078125,
+                520.2396240234375
+              ],
+              "score": 0.274295836687088,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_India_004912.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                286.18609619140625,
+                435.60302734375,
+                455.44757080078125,
+                520.2396240234375
+              ],
+              "score": 0.274295836687088,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_India_004912.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_India_004912.jpg"
+        }
+      }
+    },
+    "India_007196.jpg": {
+      "filename": "India_007196.jpg",
+      "dimensions": "720x720",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.9,
+      "cpu_latency_ms": 53.55,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                307.0895690917969,
+                536.5545654296875,
+                587.2842407226562,
+                672.3012084960938
+              ],
+              "score": 0.518929123878479,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_India_007196.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                307.0895690917969,
+                536.5545654296875,
+                587.2842407226562,
+                672.3012084960938
+              ],
+              "score": 0.518929123878479,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_India_007196.jpg"
+        },
+        "0.4": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                307.0895690917969,
+                536.5545654296875,
+                587.2842407226562,
+                672.3012084960938
+              ],
+              "score": 0.518929123878479,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_India_007196.jpg"
+        }
+      }
+    },
+    "Japan_000949.jpg": {
+      "filename": "Japan_000949.jpg",
+      "dimensions": "600x600",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.55,
+      "cpu_latency_ms": 59.0,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_Japan_000949.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_Japan_000949.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_Japan_000949.jpg"
+        }
+      }
+    },
+    "Japan_004104.jpg": {
+      "filename": "Japan_004104.jpg",
+      "dimensions": "600x600",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.8,
+      "cpu_latency_ms": 60.53,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_Japan_004104.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_Japan_004104.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_Japan_004104.jpg"
+        }
+      }
+    },
+    "Japan_004515.jpg": {
+      "filename": "Japan_004515.jpg",
+      "dimensions": "600x600",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.9,
+      "cpu_latency_ms": 49.83,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_Japan_004515.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_Japan_004515.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_Japan_004515.jpg"
+        }
+      }
+    },
+    "Japan_009598.jpg": {
+      "filename": "Japan_009598.jpg",
+      "dimensions": "600x600",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.02,
+      "cpu_latency_ms": 52.87,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_Japan_009598.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_Japan_009598.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_Japan_009598.jpg"
+        }
+      }
+    },
+    "Japan_011425.jpg": {
+      "filename": "Japan_011425.jpg",
+      "dimensions": "600x600",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.69,
+      "cpu_latency_ms": 62.85,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_Japan_011425.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_Japan_011425.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_Japan_011425.jpg"
+        }
+      }
+    },
+    "Norway_003430.jpg": {
+      "filename": "Norway_003430.jpg",
+      "dimensions": "4040x2035",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.73,
+      "cpu_latency_ms": 59.49,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                3630.169189453125,
+                1487.962158203125,
+                3967.39794921875,
+                1619.99560546875
+              ],
+              "score": 0.2038114368915558,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_Norway_003430.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_Norway_003430.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_Norway_003430.jpg"
+        }
+      }
+    },
+    "test1.jpg": {
+      "filename": "test1.jpg",
+      "dimensions": "391x282",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.45,
+      "cpu_latency_ms": 62.34,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_test1.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_test1.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_test1.jpg"
+        }
+      }
+    },
+    "test2.jpg": {
+      "filename": "test2.jpg",
+      "dimensions": "411x270",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.44,
+      "cpu_latency_ms": 51.79,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_test2.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_test2.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_test2.jpg"
+        }
+      }
+    },
+    "test3.jpg": {
+      "filename": "test3.jpg",
+      "dimensions": "397x270",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.1,
+      "cpu_latency_ms": 51.88,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                82.26998138427734,
+                147.42572021484375,
+                146.63055419921875,
+                177.44090270996094
+              ],
+              "score": 0.2307768613100052,
+              "class_id": 3,
+              "class_name": "pothole"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_test3.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_test3.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_test3.jpg"
+        }
+      }
+    },
+    "test4.jpg": {
+      "filename": "test4.jpg",
+      "dimensions": "268x270",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.05,
+      "cpu_latency_ms": 58.41,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_test4.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_test4.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_test4.jpg"
+        }
+      }
+    },
+    "test5.jpg": {
+      "filename": "test5.jpg",
+      "dimensions": "408x271",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.77,
+      "cpu_latency_ms": 51.34,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_test5.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_test5.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_test5.jpg"
+        }
+      }
+    },
+    "United_States_000008.jpg": {
+      "filename": "United_States_000008.jpg",
+      "dimensions": "640x640",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.17,
+      "cpu_latency_ms": 51.52,
+      "thresholds": {
+        "0.15": {
+          "count": 5,
+          "detections": [
+            {
+              "box": [
+                163.15301513671875,
+                483.9358215332031,
+                213.30743408203125,
+                637.09228515625
+              ],
+              "score": 0.6743443608283997,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                0.0,
+                441.28857421875,
+                138.51864624023438,
+                618.180419921875
+              ],
+              "score": 0.4095596373081207,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                0.0,
+                514.3377685546875,
+                76.45559692382812,
+                621.906005859375
+              ],
+              "score": 0.25122472643852234,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                105.26687622070312,
+                348.06549072265625,
+                171.89236450195312,
+                438.3975830078125
+              ],
+              "score": 0.2411242127418518,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                349.8685607910156,
+                544.531005859375,
+                508.7259216308594,
+                639.76904296875
+              ],
+              "score": 0.16148695349693298,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_United_States_000008.jpg"
+        },
+        "0.25": {
+          "count": 3,
+          "detections": [
+            {
+              "box": [
+                163.15301513671875,
+                483.9358215332031,
+                213.30743408203125,
+                637.09228515625
+              ],
+              "score": 0.6743443608283997,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                0.0,
+                441.28857421875,
+                138.51864624023438,
+                618.180419921875
+              ],
+              "score": 0.4095596373081207,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                0.0,
+                514.3377685546875,
+                76.45559692382812,
+                621.906005859375
+              ],
+              "score": 0.25122472643852234,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_United_States_000008.jpg"
+        },
+        "0.4": {
+          "count": 2,
+          "detections": [
+            {
+              "box": [
+                163.15301513671875,
+                483.9358215332031,
+                213.30743408203125,
+                637.09228515625
+              ],
+              "score": 0.6743443608283997,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            },
+            {
+              "box": [
+                0.0,
+                441.28857421875,
+                138.51864624023438,
+                618.180419921875
+              ],
+              "score": 0.4095596373081207,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_United_States_000008.jpg"
+        }
+      }
+    },
+    "United_States_000325.jpg": {
+      "filename": "United_States_000325.jpg",
+      "dimensions": "640x640",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.27,
+      "cpu_latency_ms": 65.29,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                5.24267578125,
+                388.06689453125,
+                307.90374755859375,
+                582.1943969726562
+              ],
+              "score": 0.6654992699623108,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_United_States_000325.jpg"
+        },
+        "0.25": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                5.24267578125,
+                388.06689453125,
+                307.90374755859375,
+                582.1943969726562
+              ],
+              "score": 0.6654992699623108,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_United_States_000325.jpg"
+        },
+        "0.4": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                5.24267578125,
+                388.06689453125,
+                307.90374755859375,
+                582.1943969726562
+              ],
+              "score": 0.6654992699623108,
+              "class_id": 2,
+              "class_name": "alligator_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_United_States_000325.jpg"
+        }
+      }
+    },
+    "United_States_001256.jpg": {
+      "filename": "United_States_001256.jpg",
+      "dimensions": "640x640",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.33,
+      "cpu_latency_ms": 57.49,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_United_States_001256.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_United_States_001256.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_United_States_001256.jpg"
+        }
+      }
+    },
+    "United_States_001340.jpg": {
+      "filename": "United_States_001340.jpg",
+      "dimensions": "640x640",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 17.95,
+      "cpu_latency_ms": 54.99,
+      "thresholds": {
+        "0.15": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_United_States_001340.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_United_States_001340.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_United_States_001340.jpg"
+        }
+      }
+    },
+    "United_States_001654.jpg": {
+      "filename": "United_States_001654.jpg",
+      "dimensions": "640x640",
+      "gpu_provider": "DmlExecutionProvider",
+      "gpu_latency_ms": 18.31,
+      "cpu_latency_ms": 56.22,
+      "thresholds": {
+        "0.15": {
+          "count": 1,
+          "detections": [
+            {
+              "box": [
+                129.8880615234375,
+                356.1164855957031,
+                222.2532958984375,
+                420.6090393066406
+              ],
+              "score": 0.188248410820961,
+              "class_id": 0,
+              "class_name": "longitudinal_crack"
+            }
+          ],
+          "saved_to": "outputs\\stage2\\conf_15\\annotated_United_States_001654.jpg"
+        },
+        "0.25": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_25\\annotated_United_States_001654.jpg"
+        },
+        "0.4": {
+          "count": 0,
+          "detections": [],
+          "saved_to": "outputs\\stage2\\conf_40\\annotated_United_States_001654.jpg"
+        }
+      }
+    }
+  }
+}

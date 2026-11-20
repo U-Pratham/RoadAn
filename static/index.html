@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoadSight AI — Road Damage Detection & Risk Intelligence</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <h1 class="nav-title">ROADSIGHT <span>AI</span></h1>
+        <p class="nav-subtitle">Road Damage Detection & Risk Intelligence System</p>
+      </div>
+    </div>
+    <div class="nav-status">
+      <div class="status-pill" id="gpuStatus">
+        <span class="status-dot"></span>
+        <span id="gpuText">Detecting Hardware...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    
+    <!-- Controls Row -->
+    <section class="controls-card">
+      <div class="controls-grid">
+        <!-- Input Selector -->
+        <div class="control-group">
+          <label class="control-label">Source Selection</label>
+          <div class="btn-group">
+            <button class="btn btn-secondary active" id="btnUploadMode">Upload Image</button>
+            <button class="btn btn-secondary" id="btnSampleMode">Sample Roads</button>
+            <button class="btn btn-secondary" id="btnWebcamMode">Live Camera</button>
+          </div>
+        </div>
+
+        <!-- Sample Dropdown -->
+        <div class="control-group hidden" id="sampleGroup">
+          <label class="control-label" for="sampleSelect">Select Test Road</label>
+          <select id="sampleSelect" class="form-select">
+            <option value="">Loading samples...</option>
+          </select>
+        </div>
+
+        <!-- Confidence Slider -->
+        <div class="control-group">
+          <div class="slider-header">
+            <label class="control-label" for="confSlider">Confidence Threshold</label>
+            <span class="slider-value" id="confValue">0.25</span>
+          </div>
+          <input type="range" id="confSlider" min="0.10" max="0.75" step="0.05" value="0.25" class="slider">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="control-group btn-action-group">
+          <button class="btn btn-primary" id="btnAnalyze">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Analyze Road
+          </button>
+        </div>
+      </div>
+
+      <!-- File Dropzone -->
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="image/*" class="file-input">
+        <div class="dropzone-content">
+          <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <p class="dropzone-text">Drag & drop road photograph here, or <span class="highlight">browse files</span></p>
+          <p class="dropzone-hint">Supports JPEG, PNG dashcam frames and smartphone captures with EXIF GPS</p>
+        </div>
+      </div>
+
+      <!-- Camera Feed (Hidden by default) -->
+      <div class="camera-panel hidden" id="cameraPanel">
+        <video id="webcam" autoplay playsinline class="camera-video"></video>
+        <button class="btn btn-primary" id="btnCapture">Capture & Scan</button>
+      </div>
+    </section>
+
+    <!-- Inspection Analysis View -->
+    <div class="dashboard-grid">
+      
+      <!-- Left: Image Viewer -->
+      <section class="card viewer-card">
+        <div class="card-header">
+          <h2 class="card-title">Computer Vision Inspection</h2>
+          <div class="badge-group" id="latencyBadges">
+            <span class="badge badge-info" id="badgeLatency">Ready</span>
+            <span class="badge badge-accent" id="badgeCount">0 Hazards</span>
+          </div>
+        </div>
+        <div class="viewer-container" id="viewerContainer">
+          <div class="viewer-placeholder" id="viewerPlaceholder">
+            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p>Select a road photograph or sample to run AI inference</p>
+          </div>
+          <img id="annotatedImage" class="annotated-img hidden" alt="Annotated road damage">
+        </div>
+      </section>
+
+      <!-- Right: Risk Intelligence Panel -->
+      <section class="card risk-card">
+        <div class="card-header">
+          <h2 class="card-title">Risk Intelligence & Road Health</h2>
+        </div>
+        
+        <!-- Risk Gauge & Index -->
+        <div class="risk-overview">
+          <div class="risk-score-box">
+            <div class="risk-circle" id="riskCircle">
+              <span class="risk-score-num" id="riskScore">0</span>
+              <span class="risk-score-label">HAZARD INDEX</span>
+            </div>
+          </div>
+          <div class="risk-details">
+            <div class="risk-level-badge" id="riskLevelBadge">SAFE / CLEAR</div>
+            <p class="risk-action-text" id="riskAction">Upload road image to evaluate severity.</p>
+            <div class="pci-metric">
+              <span>Pavement Condition Index (PCI):</span>
+              <strong id="pciScore">100 / 100</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Defect Breakdown Counters -->
+        <div class="defect-grid">
+          <div class="defect-tile defect-pothole">
+            <span class="defect-name">Potholes (D40)</span>
+            <strong class="defect-val" id="cntPothole">0</strong>
+          </div>
+          <div class="defect-tile defect-alligator">
+            <span class="defect-name">Alligator Cracks (D20)</span>
+            <strong class="defect-val" id="cntAlligator">0</strong>
+          </div>
+          <div class="defect-tile defect-longitudinal">
+            <span class="defect-name">Longitudinal (D00)</span>
+            <strong class="defect-val" id="cntLongitudinal">0</strong>
+          </div>
+          <div class="defect-tile defect-transverse">
+            <span class="defect-name">Transverse (D10)</span>
+            <strong class="defect-val" id="cntTransverse">0</strong>
+          </div>
+        </div>
+
+        <!-- Geo Location Info -->
+        <div class="geo-panel">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="geoText">GPS: No coordinates recorded yet</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- Map Section -->
+    <section class="card map-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Road Infrastructure GIS Map</h2>
+          <p class="card-subtitle">Geotagged road inspections with severity indicators and degradation history</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btnRefreshHistory">Refresh Map</button>
+      </div>
+      <div id="map" class="map-view"></div>
+    </section>
+
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Application JS -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
