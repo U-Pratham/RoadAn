@@ -323,10 +323,10 @@ function renderHistoryTable() {
         <td>
           <img 
             src="/api/images/${item.id}?type=annotated" 
-            alt="thumb" 
+            alt="${escapeHtml(item.original_filename)}" 
             class="history-thumb"
             onclick="openInspectionModal(${item.id})"
-            onerror="this.src='/static/style.css'"
+            onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 48 48\' fill=\'%231e293b\'%3E%3Crect width=\'48\' height=\'48\' rx=\'6\' fill=\'%230f172a\' stroke=\'%23334155\'/%3E%3Cpath d=\'M12 34l10-12 7 8 7-9 6 13H12z\' fill=\'%23475569\'/%3E%3Ccircle cx=\'18\' cy=\'16\' r=\'3\' fill=\'%2338bdf8\'/%3E%3C/svg%3E';"
           >
         </td>
         <td style="font-weight:600;">${escapeHtml(item.original_filename)}</td>
@@ -706,7 +706,8 @@ function renderDetectionResult(data) {
     hazardCountTag.textContent = `${data.detection_count} Hazard${data.detection_count === 1 ? '' : 's'} Identified`;
   }
   if (latencyTag) {
-    latencyTag.textContent = `${data.inference_latency_ms.toFixed(1)} ms inference`;
+    const boostNote = (data.inference_pass_used === "enhanced_wet_road") ? " (Wet-Road Dual-Pass)" : "";
+    latencyTag.textContent = `${data.inference_latency_ms.toFixed(1)} ms inference${boostNote}`;
   }
   if (explanationText) {
     explanationText.textContent = data.summary_explanation;
@@ -752,11 +753,15 @@ function renderDetectionResult(data) {
         const dCfg = PRIORITY_CONFIG[dPri] || PRIORITY_CONFIG.Low;
         const bbox = d.bounding_box || [0, 0, 0, 0];
         const bboxStr = `[${bbox.map(n => Math.round(n)).join(", ")}]`;
+        const isBoost = (d.inference_pass === "enhanced_wet_road" || (d.explanation && d.explanation.includes("Wet-Road")));
+        const boostBadge = isBoost 
+          ? `<span class="badge-tag" style="background:rgba(56,189,248,0.15); color:var(--color-cyan); font-size:0.65rem; padding:1px 5px; margin-left:5px; border:1px solid rgba(56,189,248,0.3);" title="Detected via Wet-Road / Puddle Contrast Boost">Wet-Boost</span>`
+          : "";
 
         return `
           <tr>
             <td><strong>#${idx + 1}</strong></td>
-            <td><strong style="color:var(--text-main);">${escapeHtml(d.damage_class)}</strong></td>
+            <td><strong style="color:var(--text-main);">${escapeHtml(d.damage_class)}</strong>${boostBadge}</td>
             <td style="font-family:var(--font-mono);">${(d.confidence * 100).toFixed(1)}%</td>
             <td><span class="bbox-tag">${bboxStr}</span></td>
             <td><strong style="font-family:var(--font-mono); color:${dCfg.color}">${d.individual_risk_score}</strong></td>
@@ -820,8 +825,15 @@ async function openInspectionModal(analysisId) {
     // Modal Images
     const modalImgAnnotated = document.getElementById("modalImgAnnotated");
     const modalImgOriginal = document.getElementById("modalImgOriginal");
-    if (modalImgAnnotated) modalImgAnnotated.src = `/api/images/${item.id}?type=annotated`;
-    if (modalImgOriginal) modalImgOriginal.src = `/api/images/${item.id}?type=original`;
+    const fallbackSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 360' fill='%230f172a'%3E%3Crect width='640' height='360' fill='%230f172a' stroke='%23334155'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2364748b' font-family='sans-serif' font-size='14'%3EImage file not available in ephemeral storage%3C/text%3E%3C/svg%3E";
+    if (modalImgAnnotated) {
+      modalImgAnnotated.src = `/api/images/${item.id}?type=annotated`;
+      modalImgAnnotated.onerror = function() { this.onerror = null; this.src = fallbackSvg; };
+    }
+    if (modalImgOriginal) {
+      modalImgOriginal.src = `/api/images/${item.id}?type=original`;
+      modalImgOriginal.onerror = function() { this.onerror = null; this.src = fallbackSvg; };
+    }
     switchModalViewMode("annotated");
 
     // Modal Details
@@ -845,10 +857,14 @@ async function openInspectionModal(analysisId) {
           const dCfg = PRIORITY_CONFIG[dPri] || PRIORITY_CONFIG.Low;
           const bbox = d.bounding_box || [0, 0, 0, 0];
           const bboxStr = `[${bbox.map(n => Math.round(n)).join(", ")}]`;
+          const isBoost = (d.inference_pass === "enhanced_wet_road" || (d.explanation && d.explanation.includes("Wet-Road")));
+          const boostBadge = isBoost 
+            ? `<span class="badge-tag" style="background:rgba(56,189,248,0.15); color:var(--color-cyan); font-size:0.65rem; padding:1px 5px; margin-left:5px; border:1px solid rgba(56,189,248,0.3);" title="Detected via Wet-Road / Puddle Contrast Boost">Wet-Boost</span>`
+            : "";
 
           return `
             <tr>
-              <td><strong>${escapeHtml(d.damage_class)}</strong></td>
+              <td><strong>${escapeHtml(d.damage_class)}</strong>${boostBadge}</td>
               <td style="font-family:var(--font-mono);">${(d.confidence * 100).toFixed(1)}%</td>
               <td><span class="bbox-tag">${bboxStr}</span></td>
               <td><strong style="color:${dCfg.color}; font-family:var(--font-mono);">${d.individual_risk_score}</strong></td>

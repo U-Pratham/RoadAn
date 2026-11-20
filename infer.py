@@ -146,7 +146,8 @@ def draw_detections(img: np.ndarray, detections: list):
         cv2.rectangle(annotated, (box[0], box[1]), (box[2], box[3]), color, 2)
 
         # Label text
-        label = f"{cls_name} {score:.2f}"
+        pass_tag = " [Wet-Boost]" if det.get("inference_pass") == "enhanced_wet_road" else ""
+        label = f"{cls_name} {score:.2f}{pass_tag}"
         (tw, th), baseline = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
 
         # Label background
@@ -172,7 +173,7 @@ def get_ort_session(model_path: str, device: str = "cpu"):
 
     return ort.InferenceSession(model_path, providers=providers)
 
-def run_inference(image_path: str, model_path: str = "weights/yolo11n.onnx", output_dir: str = "outputs", device: str = "cpu", conf_thresh: float = 0.20):
+def run_inference(image_path: str, model_path: str = "weights/yolo11n.onnx", output_dir: str = "outputs", device: str = "cpu", conf_thresh: float = 0.20, dual_pass: bool = True):
     image_file = Path(image_path)
     if not image_file.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
@@ -190,7 +191,7 @@ def run_inference(image_path: str, model_path: str = "weights/yolo11n.onnx", out
     blob, scale, px, py = letterbox(img, target_size=640)
     t_pre = (time.perf_counter() - t_pre0) * 1000
 
-    # Model Inference
+    # Model Inference (Pass 1 - Standard Pipeline)
     input_name = session.get_inputs()[0].name
     t_inf0 = time.perf_counter()
     outputs = session.run(None, {input_name: blob})
@@ -200,6 +201,52 @@ def run_inference(image_path: str, model_path: str = "weights/yolo11n.onnx", out
     t_post0 = time.perf_counter()
     detections = decode_and_nms(outputs[0], scale, px, py, orig_w, orig_h, conf_thresh=conf_thresh)
     t_post = (time.perf_counter() - t_post0) * 1000
+
+    for d in detections:
+        d["inference_pass"] = "standard"
+        d["enhancement_note"] = None
+
+    pass1_count = len(detections)
+    pass2_count = 0
+    dual_pass_executed = False
+    inference_pass_used = "standard"
+    pass1_detections = [dict(d) for d in detections]
+    pass2_detections = []
+
+    # Pass 2: Automatic Dual-Pass Fallback (Only when Pass 1 produces 0 detections)
+    if dual_pass and len(detections) == 0:
+        dual_pass_executed = True
+        gamma = 1.5
+        lut = np.array([((i / 255.0) ** (1.0 / gamma)) * 255 for i in np.arange(0, 256)]).astype("uint8")
+        img_enh = cv2.LUT(img, lut)
+
+        blob2, scale2, px2, py2 = letterbox(img_enh, target_size=640)
+        t_inf2_start = time.perf_counter()
+        outputs2 = session.run(None, {input_name: blob2})
+        t_inf += (time.perf_counter() - t_inf2_start) * 1000
+
+        dets2 = decode_and_nms(outputs2[0], scale2, px2, py2, orig_w, orig_h, conf_thresh=conf_thresh)
+        pass2_count = len(dets2)
+        pass2_detections = [dict(d) for d in dets2]
+
+        valid_enhanced = []
+        for ed in dets2:
+            bx = ed.get("box", [0, 0, 0, 0])
+            x1 = max(0.0, min(float(orig_w), float(bx[0])))
+            y1 = max(0.0, min(float(orig_h), float(bx[1])))
+            x2 = max(0.0, min(float(orig_w), float(bx[2])))
+            y2 = max(0.0, min(float(orig_h), float(bx[3])))
+            bw = max(0.0, x2 - x1)
+            bh = max(0.0, y2 - y1)
+            if bw >= 5 and bh >= 5 and (bw * bh) > 25:
+                ed["box"] = [x1, y1, x2, y2]
+                ed["inference_pass"] = "enhanced_wet_road"
+                ed["enhancement_note"] = "Detected via Wet-Road / Puddle Contrast Boost"
+                valid_enhanced.append(ed)
+
+        if len(valid_enhanced) > 0:
+            detections = valid_enhanced
+            inference_pass_used = "enhanced_wet_road"
 
     # Annotate Image
     annotated_img = draw_detections(img, detections)
@@ -218,6 +265,18 @@ def run_inference(image_path: str, model_path: str = "weights/yolo11n.onnx", out
         "total_ms": round(t_pre + t_inf + t_post, 2),
         "detections_count": len(detections),
         "detections": detections,
+        "dual_pass_executed": dual_pass_executed,
+        "inference_pass_used": inference_pass_used,
+        "pass1_count": pass1_count,
+        "pass2_count": pass2_count,
+        "audit": {
+            "pass1_detections": pass1_detections,
+            "pass2_detections": pass2_detections,
+            "pass1_count": pass1_count,
+            "pass2_count": pass2_count,
+            "dual_pass_executed": dual_pass_executed,
+            "inference_pass_used": inference_pass_used
+        },
         "output_path": str(out_path)
     }
 

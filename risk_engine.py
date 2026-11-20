@@ -88,6 +88,8 @@ class SingleRiskAssessment:
     priority: str
     factors: FactorScores
     explanation: str
+    inference_pass: str = "standard"
+    enhancement_note: Optional[str] = None
 
 
 @dataclass
@@ -99,6 +101,8 @@ class ImageRiskSummary:
     hazard_breakdown: Dict[str, int]
     individual_assessments: List[SingleRiskAssessment]
     summary_explanation: str
+    dual_pass_executed: bool = False
+    inference_pass_used: str = "standard"
 
 
 def normalize_road_category(category: Optional[str]) -> RoadCategory:
@@ -157,7 +161,9 @@ def assess_detection_risk(
     bounding_box: List[float],
     image_width: int,
     image_height: int,
-    road_category: Optional[str] = "unknown"
+    road_category: Optional[str] = "unknown",
+    inference_pass: str = "standard",
+    enhancement_note: Optional[str] = None
 ) -> SingleRiskAssessment:
     """
     Assess risk for a single detected road defect.
@@ -233,6 +239,8 @@ def assess_detection_risk(
         explanation_parts.append("Note: Road type unclassified; applied neutral default (15 pts).")
 
     explanation = " ".join(explanation_parts)
+    if enhancement_note:
+        explanation = f"[{enhancement_note}] {explanation}"
 
     return SingleRiskAssessment(
         damage_class=norm_class,
@@ -242,7 +250,9 @@ def assess_detection_risk(
         risk_score=final_score,
         priority=priority,
         factors=factors,
-        explanation=explanation
+        explanation=explanation,
+        inference_pass=inference_pass,
+        enhancement_note=enhancement_note
     )
 
 
@@ -250,7 +260,9 @@ def assess_image_risk(
     detections: List[Dict[str, Any]],
     image_width: int,
     image_height: int,
-    road_category: Optional[str] = "unknown"
+    road_category: Optional[str] = "unknown",
+    dual_pass_executed: bool = False,
+    inference_pass_used: str = "standard"
 ) -> ImageRiskSummary:
     """
     Assess overall road hazard risk across multiple detections on an image.
@@ -267,7 +279,9 @@ def assess_image_risk(
             total_detections=0,
             hazard_breakdown={},
             individual_assessments=[],
-            summary_explanation="No road hazards detected above the confidence threshold. Note: Visual AI scan does not guarantee structural integrity or absence of obscured road defects."
+            summary_explanation="No road hazards detected above the confidence threshold across standard and dual-pass enhanced scans. Note: Visual AI scan does not guarantee structural integrity or absence of obscured road defects.",
+            dual_pass_executed=dual_pass_executed,
+            inference_pass_used=inference_pass_used
         )
 
     # Evaluate each detection individually
@@ -278,6 +292,8 @@ def assess_image_risk(
         d_class = det.get("class_name") or det.get("damage_class") or "pothole"
         conf = float(det.get("score") if det.get("score") is not None else det.get("confidence", 0.5))
         box = det.get("box") or det.get("bounding_box") or [0, 0, 0, 0]
+        d_pass = det.get("inference_pass", "standard")
+        d_note = det.get("enhancement_note")
 
         assessment = assess_detection_risk(
             damage_class=d_class,
@@ -285,7 +301,9 @@ def assess_image_risk(
             bounding_box=box,
             image_width=image_width,
             image_height=image_height,
-            road_category=road_category
+            road_category=road_category,
+            inference_pass=d_pass,
+            enhancement_note=d_note
         )
         individual_assessments.append(assessment)
         hazard_breakdown[assessment.damage_class] = hazard_breakdown.get(assessment.damage_class, 0) + 1
@@ -313,8 +331,11 @@ def assess_image_risk(
     aggregated_score = int(round(max(0.0, min(100.0, base_score + marginal_addition))))
     image_priority = get_priority_category(aggregated_score)
 
+    has_enhanced = any(a.inference_pass == "enhanced_wet_road" for a in individual_assessments)
+    boost_prefix = "[Wet-Road / Puddle Contrast Boost Active] " if has_enhanced else ""
+
     summary_text = (
-        f"Analyzed {len(individual_assessments)} hazard(s). Primary hazard is "
+        f"{boost_prefix}Analyzed {len(individual_assessments)} hazard(s). Primary hazard is "
         f"{highest_hazard.damage_class.replace('_', ' ')} with individual risk of {highest_hazard.risk_score}/100. "
         f"Overall image risk score is {aggregated_score}/100 ({image_priority} priority)."
     )
@@ -326,5 +347,7 @@ def assess_image_risk(
         total_detections=len(individual_assessments),
         hazard_breakdown=hazard_breakdown,
         individual_assessments=individual_assessments,
-        summary_explanation=summary_text
+        summary_explanation=summary_text,
+        dual_pass_executed=dual_pass_executed or has_enhanced,
+        inference_pass_used="enhanced_wet_road" if has_enhanced else inference_pass_used
     )

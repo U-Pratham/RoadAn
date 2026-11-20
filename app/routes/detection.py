@@ -69,11 +69,16 @@ async def detect_road_damage(
         )
 
     # 3. Calculate Explainable Risk Assessments
+    dual_pass_executed = infer_result.get("dual_pass_executed", False)
+    inference_pass_used = infer_result.get("inference_pass_used", "standard")
+
     risk_summary = RiskService.evaluate(
         detections=infer_result["detections"],
         image_width=infer_result["orig_w"],
         image_height=infer_result["orig_h"],
-        road_category=road_category
+        road_category=road_category,
+        dual_pass_executed=dual_pass_executed,
+        inference_pass_used=inference_pass_used
     )
 
     # 4. Generate & Save Annotated Image
@@ -94,7 +99,8 @@ async def detect_road_damage(
             "bounding_box": assessment.bounding_box,
             "risk_score": assessment.risk_score,
             "priority": assessment.priority,
-            "explanation": assessment.explanation
+            "explanation": assessment.explanation,
+            "inference_pass": assessment.inference_pass
         })
 
     # 6. Save Relational Record to SQLite
@@ -129,6 +135,8 @@ async def detect_road_damage(
             individual_risk_score=a.risk_score,
             priority_category=a.priority,
             explanation=a.explanation,
+            inference_pass=a.inference_pass,
+            enhancement_note=a.enhancement_note,
             factors=FactorScoresSchema(
                 severity=a.factors.severity,
                 area=a.factors.area,
@@ -153,7 +161,9 @@ async def detect_road_damage(
         total_processing_ms=infer_result["total_ms"],
         detection_count=len(response_detections),
         detections=response_detections,
-        annotated_image_url=f"/api/images/{analysis_id}"
+        annotated_image_url=f"/api/images/{analysis_id}",
+        dual_pass_executed=dual_pass_executed,
+        inference_pass_used=inference_pass_used
     )
 
 
@@ -169,7 +179,21 @@ async def get_analysis_image(
     if not analysis:
         raise HTTPException(status_code=404, detail=f"Analysis with ID {analysis_id} not found.")
 
-    target_path = Path(analysis["annotated_path"] if type == "annotated" else analysis["image_path"])
+    raw_path_str = analysis["annotated_path"] if type == "annotated" else analysis["image_path"]
+    target_path = Path(raw_path_str)
+
+    # Cross-platform resolution: if absolute path doesn't exist, search relative to storage dirs
+    if not target_path.exists():
+        filename = Path(raw_path_str).name
+        alt_path = (OUTPUTS_DIR if type == "annotated" else UPLOADS_DIR) / filename
+        if alt_path.exists():
+            target_path = alt_path
+        elif type == "annotated":
+            # Fallback to original image if annotated image was not persisted
+            orig_name = Path(analysis["image_path"]).name
+            orig_alt = UPLOADS_DIR / orig_name
+            if orig_alt.exists():
+                target_path = orig_alt
 
     if not target_path.exists():
         raise HTTPException(status_code=404, detail="Image file missing from storage.")

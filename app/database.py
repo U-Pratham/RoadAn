@@ -51,9 +51,16 @@ def init_db():
         individual_risk_score INTEGER NOT NULL,
         priority_category TEXT NOT NULL,
         explanation TEXT NOT NULL,
+        inference_pass TEXT DEFAULT 'standard',
         FOREIGN KEY (analysis_id) REFERENCES analyses(id) ON DELETE CASCADE
     );
     """)
+
+    # Check and add inference_pass column if database already existed
+    cur.execute("PRAGMA table_info(detections);")
+    cols = [col[1] for col in cur.fetchall()]
+    if "inference_pass" not in cols:
+        cur.execute("ALTER TABLE detections ADD COLUMN inference_pass TEXT DEFAULT 'standard';")
 
     # Performance indices
     cur.execute("CREATE INDEX IF NOT EXISTS idx_detections_analysis ON detections(analysis_id);")
@@ -103,8 +110,8 @@ def save_analysis(
             INSERT INTO detections (
                 analysis_id, damage_class, confidence,
                 bbox_x1, bbox_y1, bbox_x2, bbox_y2,
-                individual_risk_score, priority_category, explanation
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                individual_risk_score, priority_category, explanation, inference_pass
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 analysis_id,
                 d.get("damage_class", "unknown"),
@@ -112,7 +119,8 @@ def save_analysis(
                 float(box[0]), float(box[1]), float(box[2]), float(box[3]),
                 int(d.get("risk_score", 0)),
                 d.get("priority", "Low"),
-                d.get("explanation", "")
+                d.get("explanation", ""),
+                d.get("inference_pass", "standard")
             ))
 
         conn.commit()
@@ -145,7 +153,7 @@ def get_analysis_by_id(analysis_id: int) -> Optional[Dict[str, Any]]:
 
     cur.execute("""
     SELECT id, damage_class, confidence, bbox_x1, bbox_y1, bbox_x2, bbox_y2,
-           individual_risk_score, priority_category, explanation
+           individual_risk_score, priority_category, explanation, inference_pass
     FROM detections
     WHERE analysis_id = ?
     ORDER BY individual_risk_score DESC
@@ -154,6 +162,8 @@ def get_analysis_by_id(analysis_id: int) -> Optional[Dict[str, Any]]:
 
     detections = []
     for d in det_rows:
+        inf_pass = d["inference_pass"] if "inference_pass" in d.keys() else "standard"
+        note = "Detected via Wet-Road / Puddle Contrast Boost" if inf_pass == "enhanced_wet_road" else None
         detections.append({
             "id": d["id"],
             "damage_class": d["damage_class"],
@@ -161,9 +171,14 @@ def get_analysis_by_id(analysis_id: int) -> Optional[Dict[str, Any]]:
             "bounding_box": [d["bbox_x1"], d["bbox_y1"], d["bbox_x2"], d["bbox_y2"]],
             "individual_risk_score": d["individual_risk_score"],
             "priority_category": d["priority_category"],
-            "explanation": d["explanation"]
+            "explanation": d["explanation"],
+            "inference_pass": inf_pass,
+            "enhancement_note": note
         })
 
+    dual_pass = any(d.get("inference_pass") == "enhanced_wet_road" for d in detections)
+    analysis["dual_pass_executed"] = dual_pass
+    analysis["inference_pass_used"] = "enhanced_wet_road" if dual_pass else "standard"
     analysis["detections"] = detections
     analysis["detection_count"] = len(detections)
     conn.close()

@@ -22,6 +22,8 @@ class DetectionItemSchema(BaseModel):
     priority_category: str
     explanation: str
     factors: Optional[FactorScoresSchema] = None
+    inference_pass: Optional[str] = "standard"
+    enhancement_note: Optional[str] = None
 
 
 class AnalysisResponseSchema(BaseModel):
@@ -40,6 +42,8 @@ class AnalysisResponseSchema(BaseModel):
     detection_count: int
     detections: List[DetectionItemSchema]
     annotated_image_url: str
+    dual_pass_executed: Optional[bool] = False
+    inference_pass_used: Optional[str] = "standard"
 
 
 class AnalysisDetailSchema(BaseModel):
@@ -58,6 +62,8 @@ class AnalysisDetailSchema(BaseModel):
     summary_explanation: str
     detection_count: int
     detections: List[DetectionItemSchema]
+    dual_pass_executed: Optional[bool] = False
+    inference_pass_used: Optional[str] = "standard"
 
 
 class HistoryItemSchema(BaseModel):
