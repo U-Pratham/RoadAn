@@ -220,6 +220,38 @@ class TestBackendIntegration(unittest.TestCase):
         )
         self.assertEqual(response_empty.status_code, 400)
 
+    # 11. Demo Samples Endpoint and Mounted Static Files
+    def test_11_demo_samples_and_static_mounting(self):
+        response = self.client.get("/api/demo-samples")
+        self.assertEqual(response.status_code, 200)
+        samples = response.json()
+        self.assertIsInstance(samples, list)
+        self.assertGreaterEqual(len(samples), 5)
+
+        # Verify each demo sample has required fields and its public URL resolves
+        for s in samples:
+            self.assertIn("id", s)
+            self.assertIn("title", s)
+            self.assertIn("filename", s)
+            self.assertIn("url", s)
+            self.assertIn("badge", s)
+            # Test public static image retrieval
+            img_res = self.client.get(s["url"])
+            self.assertEqual(img_res.status_code, 200, f"Demo image {s['url']} failed to load")
+            self.assertGreater(len(img_res.content), 0)
+
+    # 12. Applied Confidence Threshold Consistency
+    def test_12_applied_confidence_threshold_reporting(self):
+        with open(self.pothole_img_path, "rb") as f:
+            files = {"file": ("01.jpg", f, "image/jpeg")}
+            data = {"confidence_threshold": "0.15"}
+            response = self.client.post("/api/detect", files=files, data=data)
+
+        self.assertEqual(response.status_code, 201)
+        res = response.json()
+        self.assertIn("applied_confidence_threshold", res)
+        self.assertAlmostEqual(res["applied_confidence_threshold"], 0.15, places=2)
+
 
 if __name__ == "__main__":
     unittest.main()

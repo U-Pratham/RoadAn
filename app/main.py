@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from app.routes.detection import router as detection_router
 from app.routes.history import router as history_router
 from app.services.inference_service import InferenceService
-from app.config import STATIC_DIR, DB_PATH
+from app.config import STATIC_DIR, DB_PATH, TEST_IMAGES_DIR
 from app.database import init_db
 
 # Configure clean logging
@@ -77,3 +77,7 @@ if STATIC_DIR.exists():
         if index_file.exists():
             return FileResponse(index_file)
         return {"message": "RoadSight AI API is running. Visit /docs for OpenAPI documentation."}
+
+# Static file mount for demo sample inspection images
+if TEST_IMAGES_DIR.exists():
+    app.mount("/demo_images", StaticFiles(directory=str(TEST_IMAGES_DIR)), name="demo_images")

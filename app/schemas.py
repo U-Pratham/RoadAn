@@ -44,6 +44,7 @@ class AnalysisResponseSchema(BaseModel):
     annotated_image_url: str
     dual_pass_executed: Optional[bool] = False
     inference_pass_used: Optional[str] = "standard"
+    applied_confidence_threshold: float = 0.20
 
 
 class AnalysisDetailSchema(BaseModel):
@@ -64,6 +65,7 @@ class AnalysisDetailSchema(BaseModel):
     detections: List[DetectionItemSchema]
     dual_pass_executed: Optional[bool] = False
     inference_pass_used: Optional[str] = "standard"
+    applied_confidence_threshold: float = 0.20
 
 
 class HistoryItemSchema(BaseModel):

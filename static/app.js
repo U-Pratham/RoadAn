@@ -26,6 +26,7 @@ const PRIORITY_CONFIG = {
 
 document.addEventListener("DOMContentLoaded", () => {
   initMap();
+  loadDemoSamples();
   setupEventListeners();
   checkHealth();
   refreshAllData();
@@ -45,14 +46,23 @@ function initMap() {
     zoomControl: true
   });
 
-  // Dark OpenStreetMap CartoDB Tiles
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+  // Dark OpenStreetMap CartoDB Tiles (Standard reliable endpoint without retina glitch)
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     subdomains: "abcd",
     maxZoom: 19
   }).addTo(state.map);
 
   state.markersGroup = L.layerGroup().addTo(state.map);
+
+  // Recalculate dimensions once layout stabilizes
+  setTimeout(() => {
+    if (state.map) state.map.invalidateSize();
+  }, 250);
+
+  window.addEventListener("resize", () => {
+    if (state.map) state.map.invalidateSize();
+  });
 }
 
 function updateMapMarkers(inspections) {
@@ -60,7 +70,13 @@ function updateMapMarkers(inspections) {
 
   state.markersGroup.clearLayers();
 
-  const geolocated = inspections.filter(item => item.latitude !== null && item.longitude !== null && !isNaN(item.latitude) && !isNaN(item.longitude));
+  const geolocated = (inspections || []).filter(item => {
+    if (item.latitude === null || item.longitude === null) return false;
+    const lat = parseFloat(item.latitude);
+    const lon = parseFloat(item.longitude);
+    return !isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
+  });
+
   const geolocatedCountElem = document.getElementById("mapGeolocatedCount");
   const emptyOverlay = document.getElementById("mapEmptyOverlay");
 
@@ -70,6 +86,7 @@ function updateMapMarkers(inspections) {
 
   if (geolocated.length === 0) {
     if (emptyOverlay) emptyOverlay.classList.remove("hidden");
+    if (state.map) state.map.invalidateSize();
     return;
   } else {
     if (emptyOverlay) emptyOverlay.classList.add("hidden");
@@ -131,8 +148,77 @@ function updateMapMarkers(inspections) {
     bounds.extend([lat, lon]);
   });
 
-  if (geolocated.length > 0) {
+  if (geolocated.length === 1) {
+    state.map.setView([parseFloat(geolocated[0].latitude), parseFloat(geolocated[0].longitude)], 14);
+  } else if (geolocated.length > 1) {
     state.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+  }
+
+  setTimeout(() => {
+    if (state.map) state.map.invalidateSize();
+  }, 100);
+}
+
+/* ==========================================================================
+   1B. DEMO INSPECTION SAMPLES
+   ========================================================================== */
+async function loadDemoSamples() {
+  const container = document.getElementById("demoCardsRow");
+  if (!container) return;
+
+  try {
+    const res = await fetch("/api/demo-samples");
+    if (!res.ok) throw new Error("Could not load demo samples");
+    const samples = await res.json();
+
+    container.innerHTML = samples.map(s => `
+      <div class="demo-card" data-id="${escapeHtml(s.id)}" title="${escapeHtml(s.description)}" onclick="selectDemoSample('${escapeHtml(s.id)}')">
+        <img src="${escapeHtml(s.url)}" alt="${escapeHtml(s.title)}" class="demo-card-thumb" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 48 48\' fill=\'%231e293b\'%3E%3Crect width=\'48\' height=\'48\' rx=\'6\' fill=\'%230f172a\' stroke=\'%23334155\'/%3E%3C/svg%3E';">
+        <span class="demo-card-title">${escapeHtml(s.title)}</span>
+        <span class="demo-card-badge">${escapeHtml(s.badge)}</span>
+      </div>
+    `).join("");
+
+    window._demoSamplesCache = samples;
+  } catch (err) {
+    console.error("Failed to load demo samples:", err);
+  }
+}
+
+async function selectDemoSample(sampleId) {
+  const samples = window._demoSamplesCache || [];
+  const sample = samples.find(s => s.id === sampleId);
+  if (!sample) return;
+
+  // Visual highlight
+  document.querySelectorAll(".demo-card").forEach(c => {
+    c.classList.toggle("active", c.getAttribute("data-id") === sampleId);
+  });
+
+  try {
+    showAlert(`Loading demo sample: ${sample.title}...`, "info");
+    const res = await fetch(sample.url);
+    if (!res.ok) throw new Error(`Could not fetch demo image: HTTP ${res.status}`);
+    const blob = await res.blob();
+    const file = new File([blob], sample.filename, { type: blob.type || "image/jpeg" });
+
+    // Populate file in application state
+    handleFileSelect(file);
+
+    // Set road category preset if defined
+    const roadCatSelect = document.getElementById("roadCategory");
+    if (roadCatSelect && sample.road_category) {
+      roadCatSelect.value = sample.road_category;
+    }
+
+    // Auto-trigger detection execution
+    setTimeout(() => {
+      handleDetectionSubmit();
+    }, 200);
+
+  } catch (err) {
+    console.error("Demo sample error:", err);
+    showAlert(`Failed to load demo photo: ${err.message}`, "error");
   }
 }
 
@@ -414,6 +500,13 @@ function setupEventListeners() {
         advancedSummaryBadge.textContent = `${val}${val === "0.20" ? " (Calibrated)" : ""}`;
       }
     });
+
+    // Automatically re-trigger analysis when user releases slider on an active image
+    confSlider.addEventListener("change", () => {
+      if (state.selectedFile) {
+        handleDetectionSubmit();
+      }
+    });
   }
 
   // Coordinate Preset Chips
@@ -461,7 +554,12 @@ function setupEventListeners() {
   const btnFitMapBounds = document.getElementById("btnFitMapBounds");
   if (btnFitMapBounds) {
     btnFitMapBounds.addEventListener("click", () => {
-      if (state.allHistory.length > 0) updateMapMarkers(state.allHistory);
+      if (state.map) state.map.invalidateSize();
+      if (state.allHistory.length > 0) {
+        updateMapMarkers(state.allHistory);
+      } else if (state.map) {
+        state.map.setView([12.9716, 77.5946], 6);
+      }
     });
   }
 
@@ -704,6 +802,13 @@ function renderDetectionResult(data) {
   }
   if (hazardCountTag) {
     hazardCountTag.textContent = `${data.detection_count} Hazard${data.detection_count === 1 ? '' : 's'} Identified`;
+  }
+  const appliedThreshTag = document.getElementById("appliedThresholdTag");
+  if (appliedThreshTag) {
+    const threshVal = (data.applied_confidence_threshold !== undefined && data.applied_confidence_threshold !== null)
+      ? parseFloat(data.applied_confidence_threshold).toFixed(2)
+      : (document.getElementById("confThreshold") ? parseFloat(document.getElementById("confThreshold").value).toFixed(2) : "0.20");
+    appliedThreshTag.textContent = `Threshold: ${threshVal}`;
   }
   if (latencyTag) {
     const boostNote = (data.inference_pass_used === "enhanced_wet_road") ? " (Wet-Road Dual-Pass)" : "";

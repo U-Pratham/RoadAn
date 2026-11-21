@@ -13,7 +13,7 @@ from app.services.storage_service import StorageService
 from app.services.inference_service import InferenceService
 from app.services.risk_service import RiskService
 from app.database import save_analysis, get_analysis_by_id
-from app.config import DEFAULT_CONFIDENCE_THRESHOLD
+from app.config import DEFAULT_CONFIDENCE_THRESHOLD, UPLOADS_DIR, OUTPUTS_DIR
 
 router = APIRouter(prefix="/api", tags=["detection"])
 
@@ -163,8 +163,65 @@ async def detect_road_damage(
         detections=response_detections,
         annotated_image_url=f"/api/images/{analysis_id}",
         dual_pass_executed=dual_pass_executed,
-        inference_pass_used=inference_pass_used
+        inference_pass_used=inference_pass_used,
+        applied_confidence_threshold=confidence_threshold
     )
+
+
+@router.get(
+    "/demo-samples",
+    summary="Retrieve curated demo road inspection images"
+)
+async def get_demo_samples():
+    """Returns curated demo scenarios covering single potholes, clusters, cracks, wet roads, and clean surfaces."""
+    samples = [
+        {
+            "id": "wet-pothole",
+            "title": "Wet Pothole (Water Glare)",
+            "filename": "wet_pothole.webp",
+            "url": "/demo_images/wet_pothole.webp",
+            "road_category": "internal",
+            "badge": "Wet-Road Dual-Pass",
+            "description": "Submerged pothole with water glare. Demonstrates automatic dual-pass contrast boost."
+        },
+        {
+            "id": "multi-pothole",
+            "title": "Multi-Pothole Cluster",
+            "filename": "04.jpg",
+            "url": "/demo_images/04.jpg",
+            "road_category": "main_urban",
+            "badge": "Multi-Hazard",
+            "description": "5 visible road potholes on degraded asphalt."
+        },
+        {
+            "id": "alligator-crack",
+            "title": "Alligator Fatigue Cracking",
+            "filename": "02.jpg",
+            "url": "/demo_images/02.jpg",
+            "road_category": "residential",
+            "badge": "Fatigue Cracks",
+            "description": "Severe interconnected crocodile pattern asphalt cracks."
+        },
+        {
+            "id": "urban-pothole",
+            "title": "Urban Road Pothole",
+            "filename": "01.jpg",
+            "url": "/demo_images/01.jpg",
+            "road_category": "main_urban",
+            "badge": "Urban Arterial",
+            "description": "Sharp pothole hazard in active traffic corridor."
+        },
+        {
+            "id": "clean-road",
+            "title": "Clean Smooth Highway",
+            "filename": "07.jpg",
+            "url": "/demo_images/07.jpg",
+            "road_category": "highway",
+            "badge": "Undamaged (0 Defects)",
+            "description": "Smooth highway surface showing zero false positives across both passes."
+        }
+    ]
+    return samples
 
 
 @router.get(
@@ -198,5 +255,11 @@ async def get_analysis_image(
     if not target_path.exists():
         raise HTTPException(status_code=404, detail="Image file missing from storage.")
 
-    media_type = "image/jpeg" if target_path.suffix.lower() in [".jpg", ".jpeg"] else "image/png"
+    ext = target_path.suffix.lower()
+    if ext in [".jpg", ".jpeg"]:
+        media_type = "image/jpeg"
+    elif ext == ".webp":
+        media_type = "image/webp"
+    else:
+        media_type = "image/png"
     return FileResponse(path=target_path, media_type=media_type)
