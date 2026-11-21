@@ -6,7 +6,7 @@ Handles road image upload, validation, inference, and image delivery.
 from pathlib import Path
 from typing import Optional
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Query, status
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
 from app.schemas import AnalysisResponseSchema, DetectionItemSchema, FactorScoresSchema
 from app.services.storage_service import StorageService
@@ -224,6 +224,14 @@ async def get_demo_samples():
     return samples
 
 
+def extract_clean_filename(path_str: str) -> str:
+    """Extract clean filename regardless of Windows or POSIX separator origin."""
+    if not path_str:
+        return ""
+    clean = path_str.replace("\\", "/").rstrip("/")
+    return clean.split("/")[-1]
+
+
 @router.get(
     "/images/{analysis_id}",
     summary="Retrieve original or annotated image file"
@@ -241,19 +249,31 @@ async def get_analysis_image(
 
     # Cross-platform resolution: if absolute path doesn't exist, search relative to storage dirs
     if not target_path.exists():
-        filename = Path(raw_path_str).name
+        filename = extract_clean_filename(raw_path_str)
         alt_path = (OUTPUTS_DIR if type == "annotated" else UPLOADS_DIR) / filename
         if alt_path.exists():
             target_path = alt_path
         elif type == "annotated":
             # Fallback to original image if annotated image was not persisted
-            orig_name = Path(analysis["image_path"]).name
+            orig_name = extract_clean_filename(analysis.get("image_path", ""))
             orig_alt = UPLOADS_DIR / orig_name
             if orig_alt.exists():
                 target_path = orig_alt
 
+    # If physical image file is missing (e.g. wiped during cloud container restart),
+    # serve a clean SVG placeholder with 200 OK so the UI doesn't flood console 404s
     if not target_path.exists():
-        raise HTTPException(status_code=404, detail="Image file missing from storage.")
+        orig_name = analysis.get("original_filename", "inspection_image.jpg")
+        svg_content = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <rect width="640" height="360" fill="#0f172a"/>
+  <rect x="16" y="16" width="608" height="328" rx="8" fill="#1e293b" stroke="#334155" stroke-dasharray="6 6"/>
+  <circle cx="320" cy="140" r="36" fill="#334155"/>
+  <path d="M308 128l24 24m0-24l-24 24" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+  <text x="320" y="205" text-anchor="middle" fill="#f8fafc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="700">Inspection Audit #{analysis_id}</text>
+  <text x="320" y="230" text-anchor="middle" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500">{orig_name}</text>
+  <text x="320" y="255" text-anchor="middle" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11">Ephemeral image cleared on deployment restart • Relational record preserved</text>
+</svg>"""
+        return Response(content=svg_content, media_type="image/svg+xml")
 
     ext = target_path.suffix.lower()
     if ext in [".jpg", ".jpeg"]:

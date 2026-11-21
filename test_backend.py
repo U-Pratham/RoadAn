@@ -252,6 +252,31 @@ class TestBackendIntegration(unittest.TestCase):
         self.assertIn("applied_confidence_threshold", res)
         self.assertAlmostEqual(res["applied_confidence_threshold"], 0.15, places=2)
 
+    # 13. Missing Physical Image Graceful SVG Fallback
+    def test_13_missing_physical_image_graceful_svg_fallback(self):
+        # Create a record pointing to non-existent files
+        from app.database import save_analysis
+        ghost_id = save_analysis(
+            original_filename="ghost_archived.jpg",
+            image_path="nonexistent_folder/ghost.jpg",
+            annotated_path="nonexistent_folder/annotated_ghost.jpg",
+            latitude=None,
+            longitude=None,
+            road_category="unknown",
+            overall_risk_score=50,
+            priority_category="Moderate",
+            inference_ms=10.0,
+            total_ms=15.0,
+            summary_explanation="Archived test record without physical file on disk",
+            detections=[]
+        )
+
+        resp = self.client.get(f"/api/images/{ghost_id}?type=annotated")
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("image/svg+xml", resp.headers["content-type"])
+        self.assertIn(b"<svg", resp.content)
+        self.assertIn(b"Inspection Audit", resp.content)
+
 
 if __name__ == "__main__":
     unittest.main()

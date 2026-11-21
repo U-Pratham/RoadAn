@@ -16,6 +16,13 @@ const state = {
   modalActiveViewMode: "annotated"
 };
 
+// Reliable inline fallback handler that avoids nested quotes in HTML attributes
+window.handleImageError = function(img) {
+  if (!img) return;
+  img.onerror = null;
+  img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='%231e293b'%3E%3Crect width='48' height='48' rx='6' fill='%230f172a' stroke='%23334155'/%3E%3Cpath d='M12 34l10-12 7 8 7-9 6 13H12z' fill='%23475569'/%3E%3Ccircle cx='18' cy='16' r='3' fill='%2338bdf8'/%3E%3C/svg%3E";
+};
+
 // Priority Colors & Mapping
 const PRIORITY_CONFIG = {
   Critical: { color: "#ef4444", bgClass: "priority-critical", borderClass: "border-critical", label: "CRITICAL" },
@@ -173,7 +180,7 @@ async function loadDemoSamples() {
 
     container.innerHTML = samples.map(s => `
       <div class="demo-card" data-id="${escapeHtml(s.id)}" title="${escapeHtml(s.description)}" onclick="selectDemoSample('${escapeHtml(s.id)}')">
-        <img src="${escapeHtml(s.url)}" alt="${escapeHtml(s.title)}" class="demo-card-thumb" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 48 48\' fill=\'%231e293b\'%3E%3Crect width=\'48\' height=\'48\' rx=\'6\' fill=\'%230f172a\' stroke=\'%23334155\'/%3E%3C/svg%3E';">
+        <img src="${escapeHtml(s.url)}" alt="${escapeHtml(s.title)}" class="demo-card-thumb" onerror="handleImageError(this)">
         <span class="demo-card-title">${escapeHtml(s.title)}</span>
         <span class="demo-card-badge">${escapeHtml(s.badge)}</span>
       </div>
@@ -412,7 +419,7 @@ function renderHistoryTable() {
             alt="${escapeHtml(item.original_filename)}" 
             class="history-thumb"
             onclick="openInspectionModal(${item.id})"
-            onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 48 48\' fill=\'%231e293b\'%3E%3Crect width=\'48\' height=\'48\' rx=\'6\' fill=\'%230f172a\' stroke=\'%23334155\'/%3E%3Cpath d=\'M12 34l10-12 7 8 7-9 6 13H12z\' fill=\'%23475569\'/%3E%3Ccircle cx=\'18\' cy=\'16\' r=\'3\' fill=\'%2338bdf8\'/%3E%3C/svg%3E';"
+            onerror="handleImageError(this)"
           >
         </td>
         <td style="font-weight:600;">${escapeHtml(item.original_filename)}</td>
